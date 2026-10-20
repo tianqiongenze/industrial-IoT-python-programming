@@ -1,0 +1,9 @@
+{
+  "n_records": 500,
+  "index_col": "device_id",
+  "hits": 50,
+  "plan_indexed": "INDEX SCAN on device_id",
+  "plan_full": "FULL SCAN on sensor_log",
+  "index_ms": 0.0042,
+  "full_ms": 0.6268
+}

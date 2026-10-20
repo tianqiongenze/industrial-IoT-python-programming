@@ -1,0 +1,13 @@
+warn: 80.0
+danger: 95.0
+unit: "c"
+seed: 7
+topk: 3
+
+devices:
+  - id: 01
+    name: 注塑机A
+  - id: 02
+    name: 冷却泵B
+  - id: 03
+    name: 空压机C

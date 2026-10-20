@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "p21_pandas_clean"
+version = "1.0.0"
+description = "Pandas 数据清洗管道（03-Python程序设计-项目实战 W03 第5次课）"
+requires-python = ">=3.10"
+dependencies = ["pandas"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "PyYAML>=6.0"]
+
+[project.scripts]
+p21_pandas_clean = "pd_clean.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --tb=short"
+pythonpath = ["src"]

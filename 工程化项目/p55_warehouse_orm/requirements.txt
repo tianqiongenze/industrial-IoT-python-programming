@@ -1,0 +1,8 @@
+# 数据仓库 ORM —— 依赖清单（精确版本锁定）
+# 生成方式：在本机已校准环境中读取实际安装版本（== 保证课堂结果可复现）
+# 用法：pip install -r requirements.txt
+# 说明：
+#   1. 已安装包用 == 精确锁定；标 `# 待核验` 者本机未安装，请安装后回填版本。
+#   2. pyproject.toml 保留区间声明（库规范），此处用精确版（教学可复现）。
+#   3. 离线环境：pip install --no-index --find-links=./offline_wheels -r requirements.txt
+# 本项目仅依赖 Python 标准库，无需第三方包

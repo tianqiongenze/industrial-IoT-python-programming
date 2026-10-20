@@ -1,0 +1,45 @@
+{
+  "inserts": [
+    {
+      "comment": "A. 工程化代码：可靠性抽成可测纯函数(克隆 L11 关键代码页 29,全宽大码框)",
+      "src": 28,
+      "at": 4,
+      "fills": [
+        {"match": "退避重连", "text": "工程化代码：可靠性抽成可测纯函数"},
+        {"match": "backoff = 1", "text": "# core.py —— transport 可注入 · 零 IO 纯函数\n# 采集中枢: 读数 / 还原 / 对账恒等式 / 指数退避\n\ndef read(transport, src):\n    return [transport(src) for _ in range(int(src.get(\"n\", 3)))]\n\ndef restore(raw, scale):\n    if scale <= 0:\n        raise ValueError(\"scale 必须为正\")\n    return [v / scale for v in raw]\n\ndef reconcile(batches, flat):\n    sb = sum(sum(b) for b in batches)\n    sf = sum(flat)\n    return abs(sb - sf) < 1e-9, round(sb - sf, 9)\n\ndef sleep_with(base, attempt):\n    return base * (2 ** attempt)"}
+      ]
+    },
+    {
+      "comment": "B. 工程化设计：规则外置(克隆 L11 B02 双栏,两栏铺满)",
+      "src": 21,
+      "at": 5,
+      "fills": [
+        {"match": "知识详解：Queue传送带", "text": "工程化设计：规则外置 —— 改配置不改代码"},
+        {"match": "B02 · Queue传送带", "text": "B侧 · 第三种代码形态 · 企业级分层"},
+        {"match": "定义", "text": "◆ 为什么外置"},
+        {"match": "queue.Queue=自带保险锁的传送带", "text": "阈值/批量/轮次/数据源全在 config/rules.yaml——业务规则与代码分离，改一处不动逻辑"},
+        {"match": "使用场景", "text": "◆ 收益"},
+        {"match": "采集线程与入库线程解耦", "text": "二次运行结果一致(种子固定)；配置修改不需重编译/重分发——现场调参即改即用"},
+        {"match": "q.put(row) / row = q.get(timeout=3)", "text": "warn:80  danger:95  batch:3  rounds:4\nbackoff:0.01  unit:'c'\nsources:  PLC1:5020 scale=10\n          PLC2:5021 scale=1"},
+        {"match": "扩展与优化", "text": "◆ 设计要点"},
+        {"match": "误区：直接共享全局列表传数据", "text": "config.py 用 YAML 加载 + yaml_lite 兜底；非法阈值(顺序颠倒)启动即校验并拒绝"}
+      ]
+    },
+    {
+      "comment": "C. 工程化测试：单测怎么证可靠(克隆 L11 B02 双栏,左用例右规范,铺满)",
+      "src": 21,
+      "at": 6,
+      "fills": [
+        {"match": "知识详解：Queue传送带", "text": "工程化测试：单测怎么证可靠（GB/T 15532）"},
+        {"match": "B02 · Queue传送带", "text": "测试计划与报告 · pytest 三层策略"},
+        {"match": "定义", "text": "◆ 纯函数单测"},
+        {"match": "queue.Queue=自带保险锁的传送带", "text": "复现: python -m pytest -q ｜ 用例≥6 全绿\n按 正常/边界/异常 三档覆盖——可靠性是被测出来的，不是写在注释里"},
+        {"match": "使用场景", "text": "◆ 用例清单"},
+        {"match": "采集线程与入库线程解耦", "text": "TC-01 还原: 250/scale=10 → 25.0\nTC-02/03 对账: 一致→True / 不一致→False\nTC-04 异常: scale<=0 → ValueError"},
+        {"match": "q.put(row) / row = q.get(timeout=3)", "text": "# core 零 IO 纯函数，transport 可注入\n#   → 单测不用连真PLC，确定性可复现\n# test_core.py / test_config.py\n#   正常 / 边界 / 异常 三档"},
+        {"match": "扩展与优化", "text": "◆ GB/T 15532 三层"},
+        {"match": "误区：直接共享全局列表传数据", "text": "单元(纯函数) / 集成(pipeline端到端) / 回归(pytest -q 全量)\n缺陷记录: 本轮无遗留；退出码 0"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+warn: 80.0
+danger: 95.0
+unit: "c"
+seed: 7
+topk: 5
+
+lines:
+  - line: 一号产线
+    planned: 960
+    produced: 912
+    good: 896
+    oee: 86.6
+  - line: 二号产线
+    planned: 840
+    produced: 806
+    good: 791
+    oee: 83.4

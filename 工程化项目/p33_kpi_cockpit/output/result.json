@@ -1,0 +1,23 @@
+{
+  "rows": [
+    {
+      "line": "一号产线",
+      "planned": 960,
+      "produced": 912,
+      "good": 896,
+      "oee": 86.6,
+      "good_rate": 0.9825,
+      "plan_rate": 0.95
+    },
+    {
+      "line": "二号产线",
+      "planned": 840,
+      "produced": 806,
+      "good": 791,
+      "oee": 83.4,
+      "good_rate": 0.9814,
+      "plan_rate": 0.9595
+    }
+  ],
+  "worst": "二号产线"
+}

@@ -1,0 +1,3 @@
+# pump-ops 依赖
+numpy
+pandas

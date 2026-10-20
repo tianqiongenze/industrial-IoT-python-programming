@@ -1,0 +1,8 @@
+{
+  "rows_before": 200,
+  "rows_after": 182,
+  "removed": 18,
+  "quality": 1.0,
+  "target": 0.85,
+  "gate_passed": true
+}

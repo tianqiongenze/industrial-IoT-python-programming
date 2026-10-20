@@ -1,0 +1,10 @@
+warn: 80.0
+danger: 95.0
+project_name: pump-ops
+python_version: ">=3.10"
+deps:
+  - numpy
+  - pandas
+unit: "c"
+seed: 7
+topk: 3

@@ -1,0 +1,105 @@
+{
+  "inserts": [
+    {
+      "comment": "A. 工程化代码: 模型训练/评估门禁/保存(core.py 纯函数)",
+      "src": 28,
+      "at": 30,
+      "fills": [
+        {
+          "match": "退避重连",
+          "text": "工程化代码：训练·评估门禁·推理抽成纯函数"
+        },
+        {
+          "match": "backoff = 1",
+          "text": "# core.py —— 训练 / 评估门禁 / 保存载入（joblib）\n\ndef train(X, y, test_size=0.25, seed=42):\n    Xtr, Xte, ytr, yte = train_test_split(\n        X, y, test_size=test_size,\n        stratify=y, random_state=seed)\n    m = RandomForestClassifier(\n        n_estimators=100, random_state=0).fit(Xtr, ytr)\n    return m, {\"macro_f1\": f1_score(yte, m.predict(Xte),\n                        average=\"macro\")}\n\ndef gate(metrics, min_f1=0.80):\n    \"\"\"评估门禁：macro-F1 低于阈值即不通过\"\"\"\n    return metrics[\"macro_f1\"] >= min_f1\n\ndef save_model(model, path, metrics):\n    os.makedirs(os.path.dirname(os.path.abspath(path)),\n                exist_ok=True)\n    joblib.dump(model, path); return path"
+        }
+      ]
+    },
+    {
+      "comment": "B. 工程化设计: 规则外置 min_f1/test_size 配置",
+      "src": 21,
+      "at": 31,
+      "fills": [
+        {
+          "match": "知识详解：Queue传送带",
+          "text": "工程化设计：规则外置 —— 改配置不改代码"
+        },
+        {
+          "match": "B02 · Queue传送带",
+          "text": "B侧 · 第三种代码形态 · 企业级分层"
+        },
+        {
+          "match": "定义",
+          "text": "◆ 为什么外置"
+        },
+        {
+          "match": "queue.Queue=自带保险锁的传送带",
+          "text": "训练集占比/门禁阈值/数据源全在 config/rules.yaml——业务规则与代码分离"
+        },
+        {
+          "match": "使用场景",
+          "text": "◆ 收益"
+        },
+        {
+          "match": "采集线程与入库线程解耦",
+          "text": "种子固定结果可复现；改 min_f1/test_size 不动逻辑——模型验收口径集中一处"
+        },
+        {
+          "match": "q.put(row) / row = q.get(timeout=3)",
+          "text": "def test_gate_pass(metrics):\n    assert gate(metrics, min_f1=0.80) is True\n\ndef test_gate_fail(metrics):\n    low = {\"macro_f1\": 0.55}\n    assert gate(low, min_f1=0.80) is False"
+        },
+        {
+          "match": "扩展与优化",
+          "text": "◆ 设计要点"
+        },
+        {
+          "match": "误区：直接共享全局列表传数据",
+          "text": "config.py 用 YAML 加载 + yaml_lite 兜底；非法配置启动即校验并拒绝"
+        }
+      ]
+    },
+    {
+      "comment": "C. 工程化测试: 单测怎么证可靠(F1门禁/合成数据可复现)",
+      "src": 21,
+      "at": 32,
+      "fills": [
+        {
+          "match": "知识详解：Queue传送带",
+          "text": "工程化测试：单测怎么证可靠（GB/T 15532）"
+        },
+        {
+          "match": "B02 · Queue传送带",
+          "text": "测试计划与报告 · pytest 三层策略"
+        },
+        {
+          "match": "定义",
+          "text": "◆ 纯函数单测"
+        },
+        {
+          "match": "queue.Queue=自带保险锁的传送带",
+          "text": "复现: python -m pytest -q ｜ 用例≥6 全绿\n按 正常/边界/异常 三档覆盖——可靠性是被测出来的"
+        },
+        {
+          "match": "使用场景",
+          "text": "◆ 用例清单"
+        },
+        {
+          "match": "采集线程与入库线程解耦",
+          "text": "TC-01 合成数据可复现 | TC-02 F1≥0.80→通过\nTC-03 低分→不通过\nTC-04 缺模型 → FileNotFoundError"
+        },
+        {
+          "match": "q.put(row) / row = q.get(timeout=3)",
+          "text": "def test_gate_pass(metrics):\n    assert gate(metrics, min_f1=0.80) is True\n\ndef test_gate_fail(metrics):\n    low = {\"macro_f1\": 0.55}\n    assert gate(low, min_f1=0.80) is False"
+        },
+        {
+          "match": "扩展与优化",
+          "text": "◆ GB/T 15532 三层"
+        },
+        {
+          "match": "误区：直接共享全局列表传数据",
+          "text": "单元(纯函数) / 集成(pipeline端到端) / 回归(pytest -q)\n缺陷记录: 本轮无遗留；退出码 0"
+        }
+      ]
+    }
+  ]
+}

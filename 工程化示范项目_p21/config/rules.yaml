@@ -1,0 +1,15 @@
+# 清洗规则外置（GB/T 8566 变更管理：改规则不改代码）
+dedup: true
+time_column: ts
+missing:
+  temp: median        # 数值列→中位数插补
+  vib: interpolate    # 时序列→线性插值
+  shift: unknown      # 类别列→兜底标签
+outlier:
+  method: iqr         # iqr | zscore
+  k: 1.5
+score_weights:
+  completeness: 0.4
+  validity: 0.4
+  uniqueness: 0.2
+pass_score: 85

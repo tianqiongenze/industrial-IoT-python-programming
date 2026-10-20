@@ -1,0 +1,9 @@
+services:
+  redis:
+    image: redis:7-alpine
+  smart-ops:
+    build: ..
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    ports: ["8900:8900"]
+    depends_on: [redis]

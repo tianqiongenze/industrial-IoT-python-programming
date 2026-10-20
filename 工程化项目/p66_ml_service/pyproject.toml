@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "p66_ml_service"
+version = "1.0.0"
+description = "模型训练与服务（03-Python程序设计-项目实战 W08 第15次课）"
+requires-python = ">=3.10"
+dependencies = ["numpy", "scikit-learn"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "PyYAML>=6.0"]
+
+[project.scripts]
+p66_ml_service = "ml_service.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --tb=short"
+pythonpath = ["src"]

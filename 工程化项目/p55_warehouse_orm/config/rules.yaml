@@ -1,0 +1,7 @@
+warn: 80.0
+danger: 95.0
+n_records: 500
+index_col: device_id
+unit: "c"
+seed: 7
+topk: 3

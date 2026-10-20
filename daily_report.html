@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>每日生产分析报告</title>
+<style>
+body { font-family: sans-serif; margin: 32px; line-height: 1.6; }
+h1 { color: #1a3c5e; border-bottom: 3px solid #2c7be5; padding-bottom: 8px; }
+h2 { color: #2c7be5; margin-top: 26px; }
+.tbl { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+.tbl th, .tbl td { border: 1px solid #dee2e6; padding: 8px; }
+.tbl th { background: #e9ecef; }
+.tbl tr:nth-child(even) { background: #f8f9fa; }
+.progress { width: 100%; height: 22px; background: #e9ecef; border-radius: 11px; overflow: hidden; }
+.fill { height: 100%; background: #28a745; width: 32.5%; }
+</style></head><body>
+<h1>每日生产分析报告 2026-10-12</h1>
+<h2>1. 生产概览</h2>
+<p>总产量 <b>100,414</b> | 平均良率 <b>92.5%</b>
+ | 设备在线 <b>4/4</b>
+ | 今日告警 <b>9</b>
+ | 数据范围 2026-04-01 ~ 2026-05-12 (2,000 条)</p>
+<h2>2. 详细分析</h2>
+<h3>2.1 设备对比</h3><table border="1" class="dataframe tbl">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>产量</th>
+      <th>平均良率</th>
+      <th>平均振动</th>
+      <th>平均温度</th>
+    </tr>
+    <tr>
+      <th>device_id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DEV-01</th>
+      <td>25686</td>
+      <td>0.925</td>
+      <td>3.602</td>
+      <td>69.900</td>
+    </tr>
+    <tr>
+      <th>DEV-02</th>
+      <td>23987</td>
+      <td>0.925</td>
+      <td>3.407</td>
+      <td>69.584</td>
+    </tr>
+    <tr>
+      <th>DEV-03</th>
+      <td>26330</td>
+      <td>0.924</td>
+      <td>3.467</td>
+      <td>70.978</td>
+    </tr>
+    <tr>
+      <th>DEV-04</th>
+      <td>24411</td>
+      <td>0.926</td>
+      <td>3.586</td>
+      <td>68.359</td>
+    </tr>
+  </tbody>
+</table>
+<h3>2.2 班次对比</h3><table border="1" class="dataframe tbl">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>产量</th>
+      <th>平均良率</th>
+    </tr>
+    <tr>
+      <th>班次</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>中班(8-16h)</th>
+      <td>33742</td>
+      <td>0.926</td>
+    </tr>
+    <tr>
+      <th>夜班(16-24h)</th>
+      <td>32889</td>
+      <td>0.927</td>
+    </tr>
+    <tr>
+      <th>白班(0-8h)</th>
+      <td>33783</td>
+      <td>0.922</td>
+    </tr>
+  </tbody>
+</table>
+<h2>3. 异常识别</h2>
+<h3>3.1 告警明细（Top 20）</h3><table border="1" class="dataframe tbl">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ts</th>
+      <th>device_id</th>
+      <th>output</th>
+      <th>yield</th>
+      <th>temp</th>
+      <th>vib</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2026-05-12 15:00:00</td>
+      <td>DEV-04</td>
+      <td>53</td>
+      <td>0.886792</td>
+      <td>70.669227</td>
+      <td>5.603146</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 13:00:00</td>
+      <td>DEV-01</td>
+      <td>49</td>
+      <td>0.918367</td>
+      <td>80.295476</td>
+      <td>5.902983</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 12:30:00</td>
+      <td>DEV-04</td>
+      <td>54</td>
+      <td>0.962963</td>
+      <td>53.968566</td>
+      <td>5.374107</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 12:00:00</td>
+      <td>DEV-02</td>
+      <td>52</td>
+      <td>0.884615</td>
+      <td>80.825381</td>
+      <td>5.476103</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 10:30:00</td>
+      <td>DEV-04</td>
+      <td>64</td>
+      <td>0.937500</td>
+      <td>72.328310</td>
+      <td>5.021248</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 09:30:00</td>
+      <td>DEV-04</td>
+      <td>46</td>
+      <td>0.891304</td>
+      <td>93.547600</td>
+      <td>1.378557</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 07:00:00</td>
+      <td>DEV-04</td>
+      <td>48</td>
+      <td>0.875000</td>
+      <td>67.188552</td>
+      <td>4.909922</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 06:30:00</td>
+      <td>DEV-02</td>
+      <td>46</td>
+      <td>0.978261</td>
+      <td>93.883579</td>
+      <td>2.156002</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 04:30:00</td>
+      <td>DEV-02</td>
+      <td>46</td>
+      <td>0.934783</td>
+      <td>50.798350</td>
+      <td>4.997939</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 02:30:00</td>
+      <td>DEV-03</td>
+      <td>33</td>
+      <td>0.909091</td>
+      <td>86.172969</td>
+      <td>4.571246</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 01:00:00</td>
+      <td>DEV-02</td>
+      <td>69</td>
+      <td>0.942029</td>
+      <td>48.824967</td>
+      <td>4.620526</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 23:30:00</td>
+      <td>DEV-04</td>
+      <td>47</td>
+      <td>0.872340</td>
+      <td>66.648130</td>
+      <td>5.180893</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 23:00:00</td>
+      <td>DEV-03</td>
+      <td>50</td>
+      <td>0.980000</td>
+      <td>92.938618</td>
+      <td>1.104381</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 22:30:00</td>
+      <td>DEV-01</td>
+      <td>45</td>
+      <td>0.911111</td>
+      <td>66.112546</td>
+      <td>5.492110</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 22:00:00</td>
+      <td>DEV-04</td>
+      <td>49</td>
+      <td>0.877551</td>
+      <td>70.374378</td>
+      <td>5.336254</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 20:30:00</td>
+      <td>DEV-03</td>
+      <td>51</td>
+      <td>0.941176</td>
+      <td>92.802678</td>
+      <td>2.200265</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 20:00:00</td>
+      <td>DEV-03</td>
+      <td>51</td>
+      <td>0.901961</td>
+      <td>91.493236</td>
+      <td>4.080147</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 17:00:00</td>
+      <td>DEV-04</td>
+      <td>41</td>
+      <td>0.878049</td>
+      <td>48.856663</td>
+      <td>5.183563</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 16:30:00</td>
+      <td>DEV-02</td>
+      <td>43</td>
+      <td>0.930233</td>
+      <td>93.933420</td>
+      <td>1.806617</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 14:30:00</td>
+      <td>DEV-01</td>
+      <td>57</td>
+      <td>0.877193</td>
+      <td>92.505927</td>
+      <td>4.407646</td>
+    </tr>
+  </tbody>
+</table>
+<h3>3.2 处置建议</h3><ul><li>高振动 610 条 → 轴对中检查、动平衡校正</li><li>高温 194 条 → 检查冷却与润滑系统</li><li>良率<90% 共 529 条 → 关联工艺参数排查</li></ul>
+<h2>4. 数据附表（最近50条）</h2><table border="1" class="dataframe tbl">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ts</th>
+      <th>device_id</th>
+      <th>output</th>
+      <th>ok_qty</th>
+      <th>yield</th>
+      <th>temp</th>
+      <th>vib</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2026-05-11 15:00:00</td>
+      <td>DEV-04</td>
+      <td>50</td>
+      <td>47</td>
+      <td>0.940000</td>
+      <td>86.802568</td>
+      <td>3.954188</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 15:30:00</td>
+      <td>DEV-01</td>
+      <td>50</td>
+      <td>46</td>
+      <td>0.920000</td>
+      <td>77.575225</td>
+      <td>3.460965</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 16:00:00</td>
+      <td>DEV-03</td>
+      <td>57</td>
+      <td>52</td>
+      <td>0.912281</td>
+      <td>78.441668</td>
+      <td>1.467191</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 16:30:00</td>
+      <td>DEV-02</td>
+      <td>43</td>
+      <td>40</td>
+      <td>0.930233</td>
+      <td>93.933420</td>
+      <td>1.806617</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 17:00:00</td>
+      <td>DEV-04</td>
+      <td>41</td>
+      <td>36</td>
+      <td>0.878049</td>
+      <td>48.856663</td>
+      <td>5.183563</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 17:30:00</td>
+      <td>DEV-01</td>
+      <td>53</td>
+      <td>49</td>
+      <td>0.924528</td>
+      <td>50.775752</td>
+      <td>4.491215</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 18:00:00</td>
+      <td>DEV-02</td>
+      <td>47</td>
+      <td>42</td>
+      <td>0.893617</td>
+      <td>59.136747</td>
+      <td>3.499725</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 18:30:00</td>
+      <td>DEV-01</td>
+      <td>69</td>
+      <td>61</td>
+      <td>0.884058</td>
+      <td>89.051136</td>
+      <td>4.339813</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 19:00:00</td>
+      <td>DEV-04</td>
+      <td>54</td>
+      <td>53</td>
+      <td>0.981481</td>
+      <td>78.287711</td>
+      <td>2.161836</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 19:30:00</td>
+      <td>DEV-04</td>
+      <td>50</td>
+      <td>48</td>
+      <td>0.960000</td>
+      <td>61.752116</td>
+      <td>3.668550</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 20:00:00</td>
+      <td>DEV-03</td>
+      <td>51</td>
+      <td>46</td>
+      <td>0.901961</td>
+      <td>91.493236</td>
+      <td>4.080147</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 20:30:00</td>
+      <td>DEV-03</td>
+      <td>51</td>
+      <td>48</td>
+      <td>0.941176</td>
+      <td>92.802678</td>
+      <td>2.200265</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 21:00:00</td>
+      <td>DEV-01</td>
+      <td>54</td>
+      <td>49</td>
+      <td>0.907407</td>
+      <td>75.933865</td>
+      <td>4.253620</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 21:30:00</td>
+      <td>DEV-01</td>
+      <td>57</td>
+      <td>55</td>
+      <td>0.964912</td>
+      <td>83.730467</td>
+      <td>1.825919</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 22:00:00</td>
+      <td>DEV-04</td>
+      <td>49</td>
+      <td>43</td>
+      <td>0.877551</td>
+      <td>70.374378</td>
+      <td>5.336254</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 22:30:00</td>
+      <td>DEV-01</td>
+      <td>45</td>
+      <td>41</td>
+      <td>0.911111</td>
+      <td>66.112546</td>
+      <td>5.492110</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 23:00:00</td>
+      <td>DEV-03</td>
+      <td>50</td>
+      <td>49</td>
+      <td>0.980000</td>
+      <td>92.938618</td>
+      <td>1.104381</td>
+    </tr>
+    <tr>
+      <td>2026-05-11 23:30:00</td>
+      <td>DEV-04</td>
+      <td>47</td>
+      <td>41</td>
+      <td>0.872340</td>
+      <td>66.648130</td>
+      <td>5.180893</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 00:00:00</td>
+      <td>DEV-04</td>
+      <td>44</td>
+      <td>40</td>
+      <td>0.909091</td>
+      <td>79.281074</td>
+      <td>2.528507</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 00:30:00</td>
+      <td>DEV-04</td>
+      <td>52</td>
+      <td>49</td>
+      <td>0.942308</td>
+      <td>50.646764</td>
+      <td>1.469560</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 01:00:00</td>
+      <td>DEV-02</td>
+      <td>69</td>
+      <td>65</td>
+      <td>0.942029</td>
+      <td>48.824967</td>
+      <td>4.620526</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 01:30:00</td>
+      <td>DEV-04</td>
+      <td>47</td>
+      <td>43</td>
+      <td>0.914894</td>
+      <td>76.386022</td>
+      <td>2.510213</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 02:00:00</td>
+      <td>DEV-03</td>
+      <td>52</td>
+      <td>48</td>
+      <td>0.923077</td>
+      <td>55.099727</td>
+      <td>4.233199</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 02:30:00</td>
+      <td>DEV-03</td>
+      <td>33</td>
+      <td>30</td>
+      <td>0.909091</td>
+      <td>86.172969</td>
+      <td>4.571246</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 03:00:00</td>
+      <td>DEV-02</td>
+      <td>46</td>
+      <td>43</td>
+      <td>0.934783</td>
+      <td>48.418816</td>
+      <td>3.257914</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 03:30:00</td>
+      <td>DEV-02</td>
+      <td>52</td>
+      <td>49</td>
+      <td>0.942308</td>
+      <td>74.872092</td>
+      <td>3.941442</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 04:00:00</td>
+      <td>DEV-04</td>
+      <td>61</td>
+      <td>56</td>
+      <td>0.918033</td>
+      <td>86.040936</td>
+      <td>3.882753</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 04:30:00</td>
+      <td>DEV-02</td>
+      <td>46</td>
+      <td>43</td>
+      <td>0.934783</td>
+      <td>50.798350</td>
+      <td>4.997939</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 05:00:00</td>
+      <td>DEV-02</td>
+      <td>67</td>
+      <td>60</td>
+      <td>0.895522</td>
+      <td>88.251182</td>
+      <td>2.843804</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 05:30:00</td>
+      <td>DEV-01</td>
+      <td>57</td>
+      <td>50</td>
+      <td>0.877193</td>
+      <td>47.836799</td>
+      <td>1.304190</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 06:00:00</td>
+      <td>DEV-02</td>
+      <td>55</td>
+      <td>54</td>
+      <td>0.981818</td>
+      <td>75.115986</td>
+      <td>1.602437</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 06:30:00</td>
+      <td>DEV-02</td>
+      <td>46</td>
+      <td>45</td>
+      <td>0.978261</td>
+      <td>93.883579</td>
+      <td>2.156002</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 07:00:00</td>
+      <td>DEV-04</td>
+      <td>48</td>
+      <td>42</td>
+      <td>0.875000</td>
+      <td>67.188552</td>
+      <td>4.909922</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 07:30:00</td>
+      <td>DEV-04</td>
+      <td>44</td>
+      <td>39</td>
+      <td>0.886364</td>
+      <td>57.729741</td>
+      <td>4.148980</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 08:00:00</td>
+      <td>DEV-04</td>
+      <td>63</td>
+      <td>59</td>
+      <td>0.936508</td>
+      <td>56.342282</td>
+      <td>1.208891</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 08:30:00</td>
+      <td>DEV-02</td>
+      <td>49</td>
+      <td>45</td>
+      <td>0.918367</td>
+      <td>59.149585</td>
+      <td>1.600535</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 09:00:00</td>
+      <td>DEV-04</td>
+      <td>51</td>
+      <td>45</td>
+      <td>0.882353</td>
+      <td>47.641894</td>
+      <td>3.145356</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 09:30:00</td>
+      <td>DEV-04</td>
+      <td>46</td>
+      <td>41</td>
+      <td>0.891304</td>
+      <td>93.547600</td>
+      <td>1.378557</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 10:00:00</td>
+      <td>DEV-03</td>
+      <td>45</td>
+      <td>42</td>
+      <td>0.933333</td>
+      <td>56.904826</td>
+      <td>3.735463</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 10:30:00</td>
+      <td>DEV-04</td>
+      <td>64</td>
+      <td>60</td>
+      <td>0.937500</td>
+      <td>72.328310</td>
+      <td>5.021248</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 11:00:00</td>
+      <td>DEV-04</td>
+      <td>53</td>
+      <td>48</td>
+      <td>0.905660</td>
+      <td>53.517350</td>
+      <td>4.072608</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 11:30:00</td>
+      <td>DEV-01</td>
+      <td>43</td>
+      <td>39</td>
+      <td>0.906977</td>
+      <td>87.295224</td>
+      <td>2.428249</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 12:00:00</td>
+      <td>DEV-02</td>
+      <td>52</td>
+      <td>46</td>
+      <td>0.884615</td>
+      <td>80.825381</td>
+      <td>5.476103</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 12:30:00</td>
+      <td>DEV-04</td>
+      <td>54</td>
+      <td>52</td>
+      <td>0.962963</td>
+      <td>53.968566</td>
+      <td>5.374107</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 13:00:00</td>
+      <td>DEV-01</td>
+      <td>49</td>
+      <td>45</td>
+      <td>0.918367</td>
+      <td>80.295476</td>
+      <td>5.902983</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 13:30:00</td>
+      <td>DEV-03</td>
+      <td>41</td>
+      <td>39</td>
+      <td>0.951220</td>
+      <td>67.399366</td>
+      <td>3.420696</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 14:00:00</td>
+      <td>DEV-01</td>
+      <td>32</td>
+      <td>28</td>
+      <td>0.875000</td>
+      <td>62.917120</td>
+      <td>1.355146</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 14:30:00</td>
+      <td>DEV-01</td>
+      <td>49</td>
+      <td>47</td>
+      <td>0.959184</td>
+      <td>77.895583</td>
+      <td>3.773408</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 15:00:00</td>
+      <td>DEV-04</td>
+      <td>53</td>
+      <td>47</td>
+      <td>0.886792</td>
+      <td>70.669227</td>
+      <td>5.603146</td>
+    </tr>
+    <tr>
+      <td>2026-05-12 15:30:00</td>
+      <td>DEV-03</td>
+      <td>62</td>
+      <td>59</td>
+      <td>0.951613</td>
+      <td>49.285876</td>
+      <td>2.142475</td>
+    </tr>
+  </tbody>
+</table>
+<h2>5. 效率对标</h2>
+<p>今日 1,625 / 目标 5,000 = <b>32.5%</b></p>
+<div class="progress"><div class="fill"></div></div>
+<p>⚠️ 还差 3,375 件达标</p>
+<hr><p style="color:#6c757d;font-size:.9em">生成时间: 2026-10-12 18:47:07
+ | 数据来源: 模拟产线数据 (RandomState=2026) | reportlab转PDF复用02包w10字体方案</p>
+</body></html>

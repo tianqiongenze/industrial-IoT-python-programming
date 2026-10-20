@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "p12_proj_template"
+version = "1.0.0"
+description = "标准工程模板生成（03-Python程序设计-项目实战 W01 第2次课）"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "PyYAML>=6.0"]
+
+[project.scripts]
+p12_proj_template = "proj_template.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --tb=short"
+pythonpath = ["src"]

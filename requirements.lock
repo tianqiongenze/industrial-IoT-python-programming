@@ -1,0 +1,25 @@
+# 《Python程序设计（项目实战）》（pp03 环境） —— 精确版本锁定（requirements.lock）
+# 生成日期: 2026-10-13（73号轮）｜生成方式: 在本机已校准环境中读取已安装包的实际版本
+# 用法: pip install -r requirements.lock        （离线: pip install --no-index --find-links=./offline_wheels -r requirements.lock）
+# 说明:
+#   1. requirements.txt 用区间(>=)便于跟随升级；本文件用精确(==)保证**课堂结果可复现**。
+#   2. 标 `# 待核验` 的包在本机未安装（多为离线/可选依赖），联网或安装后请用下方命令回填。
+#   3. 回填命令: python -c "import importlib.metadata as m; print(m.version('包名'))"
+
+pandas==3.0.5
+numpy==2.4.4
+# matplotlib==<待核验>   # W4图表
+scikit-learn==1.9.0
+SQLAlchemy==2.0.54
+# plotly==<待核验>   # W5仪表盘备选
+# streamlit==<待核验>   # W5仪表盘
+Jinja2==3.1.6
+reportlab==5.0.1
+pymodbus==3.16.1
+paho-mqtt==2.1.0
+requests==2.33.1
+litestar==2.24.0
+granian==2.8.2
+# kuzu==<待核验>   # P7图库(归档版)
+# duckdb==<待核验>   # P7分析库
+pytest==9.0.3

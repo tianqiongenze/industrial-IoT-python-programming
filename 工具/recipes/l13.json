@@ -1,0 +1,105 @@
+{
+  "inserts": [
+    {
+      "comment": "A. 工程化代码: Table 内存表+倒排索引(core.py 纯函数)",
+      "src": 28,
+      "at": 30,
+      "fills": [
+        {
+          "match": "退避重连",
+          "text": "工程化代码：极简ORM·内存表+倒排索引"
+        },
+        {
+          "match": "backoff = 1",
+          "text": "# core.py —— 零依赖内存表 + 倒排索引（原理可见）\n\nclass Table:\n    def __init__(self, name, fields):\n        if not fields: raise ValueError(\"未定义字段\")\n        self.name = name; self.fields = list(fields)\n        self.rows = []; self.indexes = {}\n\n    def create_index(self, col):\n        inv = {}\n        for i, r in enumerate(self.rows):\n            inv.setdefault(r[col], set()).add(i)\n        self.indexes[col] = inv\n\n    def where(self, **kw):\n        if len(kw) == 1:\n            col, val = next(iter(kw.items()))\n            if col in self.indexes:\n                return [self.rows[i] for i in\n                        sorted(self.indexes[col].get(val, set()))]\n        return [r for r in self.rows\n                if all(r.get(k) == v for k, v in kw.items())]"
+        }
+      ]
+    },
+    {
+      "comment": "B. 工程化设计: 索引抉择 倒排索引/索引设计 EXPLAIN",
+      "src": 21,
+      "at": 31,
+      "fills": [
+        {
+          "match": "知识详解：Queue传送带",
+          "text": "工程化设计：索引抉择 —— 空间换时间"
+        },
+        {
+          "match": "B02 · Queue传送带",
+          "text": "B侧 · 索引与EXPLAIN · 数据访问方式"
+        },
+        {
+          "match": "定义",
+          "text": "◆ 为什么加索引"
+        },
+        {
+          "match": "queue.Queue=自带保险锁的传送带",
+          "text": "where(device_id=..) 频繁查询列上建倒排索引——等值查询从全表扫描降为索引直取"
+        },
+        {
+          "match": "使用场景",
+          "text": "◆ 什么时候建"
+        },
+        {
+          "match": "采集线程与入库线程解耦",
+          "text": "高频等值查询列建索引；写多读少、筛选性差的列不建——索引本身占空间与维护成本"
+        },
+        {
+          "match": "q.put(row) / row = q.get(timeout=3)",
+          "text": "def test_index_query(tbl):\n    assert len(tbl.where(device_id=\"DEV-02\")) == 3\ndef test_no_index(tbl):\n    assert tbl.explain(temp=3.0) == \"FULL SCAN\""
+        },
+        {
+          "match": "扩展与优化",
+          "text": "◆ 设计要点"
+        },
+        {
+          "match": "误区：直接共享全局列表传数据",
+          "text": "对账式验证：有索引结果=无索引结果，机制不同但答案一致——先跑对再谈优化"
+        }
+      ]
+    },
+    {
+      "comment": "C. 工程化测试: 单测怎么证可靠(索引/全表扫描/字段校验)",
+      "src": 21,
+      "at": 32,
+      "fills": [
+        {
+          "match": "知识详解：Queue传送带",
+          "text": "工程化测试：单测怎么证可靠（GB/T 15532）"
+        },
+        {
+          "match": "B02 · Queue传送带",
+          "text": "测试计划与报告 · pytest 三层策略"
+        },
+        {
+          "match": "定义",
+          "text": "◆ 纯函数单测"
+        },
+        {
+          "match": "queue.Queue=自带保险锁的传送带",
+          "text": "复现: python -m pytest -q ｜ 用例≥6 全绿\n按 正常/边界/异常 三档覆盖——可靠性是被测出来的"
+        },
+        {
+          "match": "使用场景",
+          "text": "◆ 用例清单"
+        },
+        {
+          "match": "采集线程与入库线程解耦",
+          "text": "TC-01 缺字段 insert → ValueError\nTC-02 索引查询正确 | TC-03 无索引→FULL SCAN\nTC-04 空字段表 → ValueError"
+        },
+        {
+          "match": "q.put(row) / row = q.get(timeout=3)",
+          "text": "def test_index_query(tbl):\n    assert len(tbl.where(device_id=\"DEV-02\")) == 3\ndef test_no_index(tbl):\n    assert tbl.explain(temp=3.0) == \"FULL SCAN\""
+        },
+        {
+          "match": "扩展与优化",
+          "text": "◆ GB/T 15532 三层"
+        },
+        {
+          "match": "误区：直接共享全局列表传数据",
+          "text": "单元(纯函数) / 集成(pipeline端到端) / 回归(pytest -q)\n缺陷记录: 本轮无遗留；退出码 0"
+        }
+      ]
+    }
+  ]
+}

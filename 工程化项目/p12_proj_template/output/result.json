@@ -1,0 +1,19 @@
+{
+  "name": "pump-ops",
+  "n_files": 6,
+  "made": [],
+  "kept": [
+    "README.md",
+    ".gitignore",
+    "requirements.txt",
+    "src/__init__.py",
+    "tests/__init__.py",
+    "run.py"
+  ],
+  "verify": {
+    "missing": [],
+    "empty_dirs": [],
+    "junk": []
+  },
+  "passed": true
+}

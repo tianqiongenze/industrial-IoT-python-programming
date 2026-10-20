@@ -1,0 +1,105 @@
+{
+  "inserts": [
+    {
+      "comment": "A. 工程化代码: 统一 get/put/incr API——Redis优先/discache回退(多引擎决策)",
+      "src": 28,
+      "at": 2,
+      "fills": [
+        {
+          "match": "退避重连",
+          "text": "工程化代码：同一接口·双后端实现（决策矩阵落地）"
+        },
+        {
+          "match": "backoff = 1",
+          "text": "# kv.py —— Redis 优先，diskcache 进程外等价回退\n# 教学: 同一接口 get/put/incr，两种后端\n\nimport time\nfrom config import DISK_CACHE, REDIS_URL\n\nclass RedisKV:\n    name = \"redis\"\n    def __init__(self, url):\n        import redis\n        self.r = redis.Redis.from_url(\n            url, socket_connect_timeout=1)\n    def put(self, k, v, ttl=60):\n        return self.r.setex(k, ttl, v)\n    def get(self, k):\n        return self.r.get(k)\n    def incr(self, k, ttl=3600):\n        \"\"\"原子计数：API限流(每IP每时N次)\"\"\"\n        return self.r.incr(k, 1)"
+        }
+      ]
+    },
+    {
+      "comment": "B. 工程化设计: 存储引擎抉择——决策矩阵(关系/时序/图/KV/向量)",
+      "src": 21,
+      "at": 3,
+      "fills": [
+        {
+          "match": "知识详解：Queue传送带",
+          "text": "工程化设计：存储引擎抉择 —— 决策矩阵留痕"
+        },
+        {
+          "match": "B02 · Queue传送带",
+          "text": "B侧 · 存储引擎全面 · 会选型"
+        },
+        {
+          "match": "定义",
+          "text": "◆ 选引擎三问"
+        },
+        {
+          "match": "queue.Queue=自带保险锁的传送带",
+          "text": "数据关系复杂?→关系型(SQLite/SQLAlchemy)\n时序采样密集?→时序库(duckdb)\nKV热点/限流?→Redis/diskcache"
+        },
+        {
+          "match": "使用场景",
+          "text": "◆ 决策矩阵"
+        },
+        {
+          "match": "采集线程与入库线程解耦",
+          "text": "本课矩阵: 引擎/数据特征/当示例/回退B案——机房离线时 Redis→diskcache 同接口回退"
+        },
+        {
+          "match": "q.put(row) / row = q.get(timeout=3)",
+          "text": "① 关系 SQLite   device/points/alerts\n② 时序 duckdb   vibration 采样\n③ 图   kuzu     topology 拓扑\n④ KV   Redis/diskcache 限流缓存\n⑤ 向量 chroma   语义检索"
+        },
+        {
+          "match": "扩展与优化",
+          "text": "◆ 决策要点"
+        },
+        {
+          "match": "误区：直接共享全局列表传数据",
+          "text": "决策矩阵=记录为何选它/弃它(理由+回切条件)；验收点名考'为什么这么选'"
+        }
+      ]
+    },
+    {
+      "comment": "C. 工程化测试: 单测怎么证可靠(双后端等价/回退)",
+      "src": 21,
+      "at": 4,
+      "fills": [
+        {
+          "match": "知识详解：Queue传送带",
+          "text": "工程化测试：单测怎么证可靠（GB/T 15532）"
+        },
+        {
+          "match": "B02 · Queue传送带",
+          "text": "测试计划与报告 · 双后端等价"
+        },
+        {
+          "match": "定义",
+          "text": "◆ 接口单测"
+        },
+        {
+          "match": "queue.Queue=自带保险锁的传送带",
+          "text": "复现: python -m pytest -q ｜ 用例≥6 全绿\n同一接口 Redis 与 diskcache 行为一致——接口契约被测试钉住"
+        },
+        {
+          "match": "使用场景",
+          "text": "◆ 用例清单"
+        },
+        {
+          "match": "采集线程与入库线程解耦",
+          "text": "TC-01 put/get 往返一致\nTC-02 incr 原子计数\nTC-03 Redis断→diskcache 回退"
+        },
+        {
+          "match": "q.put(row) / row = q.get(timeout=3)",
+          "text": "def test_kv_roundtrip(kv):\n    kv.put(\"k\", \"v\"); assert kv.get(\"k\") == \"v\"\ndef test_fallback():\n    assert RedisKV.unavailable \\\n           or use_diskcache() is True"
+        },
+        {
+          "match": "扩展与优化",
+          "text": "◆ GB/T 15532 三层"
+        },
+        {
+          "match": "误区：直接共享全局列表传数据",
+          "text": "单元(接口) / 集成(多库端到端) / 回归(pytest -q)\n缺陷记录: 本轮无遗留；退出码 0"
+        }
+      ]
+    }
+  ]
+}

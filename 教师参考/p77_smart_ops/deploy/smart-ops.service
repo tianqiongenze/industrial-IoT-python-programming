@@ -1,0 +1,14 @@
+# systemd 生产部署（Linux机房服务器）：/etc/systemd/system/smart-ops.service
+[Unit]
+Description=Liangjiang Smart-Ops (Litestar+Granian)
+After=network.target redis.service
+
+[Service]
+WorkingDirectory=/opt/smart-ops
+Environment=REDIS_URL=redis://127.0.0.1:6379/0
+ExecStart=/opt/anaconda3/bin/python -m granian --interface asgi service.app:app --host 0.0.0.0 --port 8900 --workers 4
+Restart=always
+User=ops
+
+[Install]
+WantedBy=multi-user.target
