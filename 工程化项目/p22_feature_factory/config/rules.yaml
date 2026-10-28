@@ -1,8 +1,85 @@
-warn: 80.0
-danger: 95.0
-n_windows: 40
-n_features: 17
-unit: "c"
+# warn: 峭度预警线（工单 B05：健康轴承≈3，破 4 说明波形出现冲击成分）
+warn: 4.0
+# danger: 峭度停机线（冲击密集/剥落发展，建议停机复检）
+danger: 6.0
+# unit: 振动工程量纲口径（报告与台账里的单位标注）
+unit: "mm/s"
+# seed: 唯一随机源（信号合成 / 分层切分 / 随机森林）——二次运行逐字节一致
 seed: 42
+# topk: 报告与台账列示的 Top-N 条目数（特征重要性排行等）
 topk: 6
-image_shape: 64
+
+io:
+  # 真实数据链：默认读取 P2.1 的干净输出（相对本项目目录）
+  clean_csv: "../p21_pandas_clean/output/clean.csv"
+  clean_id_column: "device_id"
+  clean_value_column: "temp"
+  clean_time_column: "ts"
+  out_features_csv: "features.csv"
+  out_features_npy: "features.npy"
+  out_labels_npy: "labels.npy"
+  out_scaler_json: "scaler.json"
+  out_feature_dict_csv: "feature_dict.csv"
+  out_feature_dict_md: "feature_dict.md"
+  out_result_json: "result.json"
+  out_report: "report.txt"
+  out_boxplot: "boxplot.png"
+  out_corr_heatmap: "corr_heatmap.png"
+  # 易变的墙钟计时写到这里（output/ 之外），保证 output/ 二次运行逐字节一致
+  out_timing_json: "../runtime/timing.json"
+
+signal:
+  # generator = 工单 starter 的振动故障发生器；clean = P2.1 输出切窗（真实数据链）
+  source: "generator"
+  samples: 1000
+  length: 1000
+  fs: 100.0
+  f0: 8.0
+  harmonic: 2.0
+  fault_ratio: 0.5
+  # 1×/2× 共享的线谱功率：功率守恒设计（详见 core.make_signals 文档）
+  tone_power: 0.008
+  noise_low: 0.14
+  noise_high: 0.18
+  impact_amp: 0.9
+  impact_rate: 0.02
+  # source=clean 时的切窗口径（窗口太短 FFT 频率分辨率不够）
+  window_length: 64
+  window_stride: 32
+  # 标签来源：清单内设备记 1（磨损），其余记 0（正常）
+  fault_devices: ["DEV-03", "DEV-04"]
+
+features:
+  primary: 30      # 时域10 + 频域15 + 统计5（工单特征清单口径）
+  derived: 5       # A 层超优：由主特征组合的衍生特征
+  entropy_bins: 16 # 信息熵直方图桶数（上限 log2(16)=4 bit）
+  peak_orders: 3   # 前 N 大谱线（频域峰特征个数）
+
+model:
+  # 重要性证明用：分层切分 + 随机森林
+  estimators: 200
+  min_samples_leaf: 2
+  test_size: 0.3
+  cv_folds: 5
+
+perf:
+  # 工单验收线：1000 样本特征计算 < 100ms（良好）/ < 50ms（超优）
+  target_ms: 100.0
+  excellent_ms: 50.0
+  repeats: 5       # 计时重复次数，取最小值报告（避开冷启动噪声）
+
+redundancy:
+  # A 层去冗余：|r| 超过阈值的特征对只留一个
+  corr_threshold: 0.95
+  keep: "importance"   # importance=按 RF 重要性优先；rank=按清单顺序
+
+vectorization:
+  # C 层口径「以向量化为主，无逐样本 for 循环」的可执行闸门：AST 静态扫描
+  # （等价于教师版 notebook 里 dis.get_instructions(...) 数 FOR_ITER 的写法）
+  enabled: true
+  # 扫描面：模块.类.方法 / 模块.函数；扩大或缩小口径只改这里，不动代码
+  targets: ["core.Ctx.__init__", "core.spectrum", "core._top3", "core.Ctx.amp_at", "core.Ctx.band_power", "core._time_feats", "core._freq_feats", "core._stat_feats", "core._stack", "core.extract_primary", "core.extract_derived", "core.extract"]
+  # 迭代"特征名注册表"的循环：次数 = 特征数（常数 35），与样本量无关 ⇒ 允许
+  registry_names: [TIME_FEATS, FREQ_FEATS, STAT_FEATS, DERIVED_FEATS, PRIMARY_FEATS, ALL_FEATS, META, cols, col, names, name, rows, dict_rows, keys, np.unique, groupby]
+  # 迭代"样本轴"的循环：逐样本 Python 循环 ⇒ 违规（C 层判未达标）
+  sample_names: [X, x, y, F, Z, sig, signal, rows_, samples, window, windows, batch]

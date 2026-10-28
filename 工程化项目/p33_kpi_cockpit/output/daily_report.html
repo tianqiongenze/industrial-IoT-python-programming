@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>每日生产分析报告 ｜ 2026-03-01~2026-03-25</title>
+  <style>
+    body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;margin:24px;color:#1a202c}
+    h1{font-size:20px;border-bottom:3px solid #2b6cb0;padding-bottom:6px}
+    h2{font-size:16px;margin-top:22px;color:#2b6cb0}
+    .meta{font-size:12px;color:#4a5568;line-height:1.7}
+    table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px}
+    th,td{border:1px solid #cbd5e0;padding:4px 6px;text-align:left}
+    th{background:#e6ecf5}
+    .cards{display:flex;flex-wrap:wrap;gap:10px}
+    .card{border:1px solid #cbd5e0;border-radius:8px;padding:8px 12px;min-width:150px}
+    .card b{display:block;font-size:11px;color:#718096;font-weight:normal}
+    .card span{font-size:20px;font-weight:bold}
+    .ok{color:#276749}.warn{color:#b7791f}.error{color:#c53030}
+    .pill{padding:1px 6px;border-radius:10px;font-size:11px;color:#fff}
+    .pill.ok{background:#276749}.pill.warn{background:#b7791f}.pill.error{background:#c53030}
+    footer{margin-top:24px;font-size:11px;color:#718096;border-top:1px dashed #cbd5e0}
+    @media (max-width:600px){body{margin:10px}.card span{font-size:16px}}
+  </style>
+</head>
+<body>
+  <h1>每日生产分析报告 ｜ 2026-03-01~2026-03-25</h1>
+  <p class="meta">
+    生成时间：未启用（加 --stamp 写入时间戳）<br>
+    数据源：P2.1 清洁产出 ../p21_pandas_clean/output/clean.csv (sha256=625d68705c79, 1186 行)<br>
+    KPI 口径（共 9 项，工单点名 5 项优先）：总产量、平均良率、设备在线数、今日告警数、效率对标、OEE均值、计划达成率、平均温度、最高振动
+  </p>
+
+  <h2>一、生产概览</h2>
+  <div class="cards">
+    
+    <div class="card"><b>总产量</b>
+      <span class="ok">60,273</span>
+      
+    </div>
+    
+    <div class="card"><b>平均良率</b>
+      <span class="warn">92.40%</span>
+      
+    </div>
+    
+    <div class="card"><b>设备在线数</b>
+      <span class="ok">4/4</span>
+      
+    </div>
+    
+    <div class="card"><b>今日告警数</b>
+      <span class="error">357</span>
+      
+    </div>
+    
+    <div class="card"><b>效率对标</b>
+      <span class="ok">100.5%</span>
+      
+    </div>
+    
+    <div class="card"><b>OEE均值</b>
+      <span class="ok">83.27%</span>
+      
+    </div>
+    
+    <div class="card"><b>计划达成率</b>
+      <span class="ok">95.52%</span>
+      
+    </div>
+    
+    <div class="card"><b>平均温度</b>
+      <span class="ok">64.85 ℃</span>
+      
+    </div>
+    
+    <div class="card"><b>最高振动</b>
+      <span class="error">5.999 mm/s</span>
+      
+    </div>
+    
+  </div>
+  <p class="meta">
+    全量记录 1186 行 ｜ 本报告窗口 1186 行 ｜
+    覆盖设备 4 台 ｜ 合格合计 55695 ｜
+    窗口良率 92.40% ｜ 在线 4/4 ｜
+    告警 357 ｜ 效率对标 100.5%
+  </p>
+
+  <h2>二、详细分析</h2>
+  <p class="meta">产量趋势采样点 25 个（明细见下方折线与设备对比表）。</p><svg width="720" height="120" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#2b6cb0" stroke-width="2" points="0.0,46.6 30.0,40.8 60.0,51.0 90.0,52.7 120.0,43.6 150.0,43.2 180.0,28.6 210.0,69.3 240.0,11.0 270.0,56.8 300.0,83.9 330.0,61.2 360.0,110.0 390.0,52.7 420.0,41.5 450.0,54.7 480.0,66.6 510.0,55.1 540.0,42.5 570.0,61.2 600.0,54.4 630.0,52.4 660.0,79.8 690.0,10.0 720.0,65.6"/></svg>
+  <table>
+    <tr><th>设备</th><th>产线</th><th>产量</th><th>合格</th><th>良率%</th><th>告警</th><th>灯态</th></tr>
+    
+    <tr><td>DEV-04</td><td>N4号产线</td><td>15201</td>
+      <td>14066</td><td>92.53</td><td>100</td>
+      <td><span class="pill error">红灯</span></td></tr>
+    
+    <tr><td>DEV-02</td><td>二号产线</td><td>15093</td>
+      <td>13961</td><td>92.5</td><td>84</td>
+      <td><span class="pill error">红灯</span></td></tr>
+    
+    <tr><td>DEV-03</td><td>三号产线</td><td>15040</td>
+      <td>13896</td><td>92.39</td><td>73</td>
+      <td><span class="pill error">红灯</span></td></tr>
+    
+    <tr><td>DEV-01</td><td>一号产线</td><td>14939</td>
+      <td>13772</td><td>92.19</td><td>100</td>
+      <td><span class="pill error">红灯</span></td></tr>
+    
+  </table>
+
+  <h2>三、异常识别</h2>
+  <p class="meta">
+    超阈值记录共 357 条（温度 &gt; 90.0℃
+    或振动 &gt; 4.5 mm/s），以下列前 5 条并附处置建议。
+  </p>
+  <table>
+    <tr><th>时间</th><th>设备</th><th>温度</th><th>振动</th><th>原因</th><th>处置建议</th></tr>
+    
+    <tr><td>2026-03-03 00:30:00</td><td>DEV-02</td><td class="error">57.2</td>
+      <td class="error">5.999</td><td>vib</td><td>振动 5.999 mm/s &gt; 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。</td></tr>
+    
+    <tr><td>2026-03-20 04:00:00</td><td>DEV-01</td><td class="error">50.36</td>
+      <td class="error">5.999</td><td>vib</td><td>振动 5.999 mm/s &gt; 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。</td></tr>
+    
+    <tr><td>2026-03-11 12:00:00</td><td>DEV-01</td><td class="error">73.51</td>
+      <td class="error">5.998</td><td>vib</td><td>振动 5.998 mm/s &gt; 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。</td></tr>
+    
+    <tr><td>2026-03-08 22:00:00</td><td>DEV-01</td><td class="error">61.04</td>
+      <td class="error">5.979</td><td>vib</td><td>振动 5.979 mm/s &gt; 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。</td></tr>
+    
+    <tr><td>2026-03-24 20:30:00</td><td>DEV-02</td><td class="error">84.29</td>
+      <td class="error">5.977</td><td>vib</td><td>振动 5.977 mm/s &gt; 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。</td></tr>
+    
+  </table>
+
+  <h2>四、数据附表</h2>
+  <p class="meta">末 50 行明细，窗口共 1186 行（层数由 config/report.tail_rows 控制）。</p>
+  <table>
+    <tr><th>ts</th><th>device_id</th><th>line</th><th>output</th><th>ok_qty</th><th>yield_pct</th><th>temp</th><th>vib</th><th>status</th></tr>
+    
+    <tr><td>2026-03-21 21:30:00</td><td>DEV-04</td><td>N4号产线</td><td>52</td><td>46</td><td>88.46</td><td>80.71</td><td>2.286</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-21 23:30:00</td><td>DEV-04</td><td>N4号产线</td><td>58</td><td>54</td><td>93.1</td><td>63.95</td><td>5.39</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 01:30:00</td><td>DEV-04</td><td>N4号产线</td><td>46</td><td>42</td><td>91.3</td><td>47.19</td><td>2.807</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 03:30:00</td><td>DEV-04</td><td>N4号产线</td><td>69</td><td>60</td><td>86.96</td><td>84.86</td><td>2.656</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 05:30:00</td><td>DEV-04</td><td>N4号产线</td><td>49</td><td>47</td><td>95.92</td><td>80.75</td><td>2.211</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 07:30:00</td><td>DEV-04</td><td>N4号产线</td><td>44</td><td>39</td><td>88.64</td><td>79.89</td><td>2.723</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 09:30:00</td><td>DEV-04</td><td>N4号产线</td><td>51</td><td>45</td><td>88.24</td><td>53.33</td><td>5.43</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 11:30:00</td><td>DEV-04</td><td>N4号产线</td><td>45</td><td>41</td><td>91.11</td><td>48.03</td><td>4.154</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 13:30:00</td><td>DEV-04</td><td>N4号产线</td><td>56</td><td>55</td><td>98.21</td><td>82.66</td><td>2.965</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 15:30:00</td><td>DEV-04</td><td>N4号产线</td><td>66</td><td>65</td><td>98.48</td><td>79.58</td><td>5.617</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 17:30:00</td><td>DEV-04</td><td>N4号产线</td><td>45</td><td>41</td><td>91.11</td><td>82.25</td><td>3.041</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 19:30:00</td><td>DEV-04</td><td>N4号产线</td><td>45</td><td>42</td><td>93.33</td><td>65.47</td><td>1.686</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 21:30:00</td><td>DEV-04</td><td>N4号产线</td><td>43</td><td>42</td><td>97.67</td><td>79.88</td><td>4.441</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-22 23:30:00</td><td>DEV-04</td><td>N4号产线</td><td>43</td><td>39</td><td>90.7</td><td>47.98</td><td>4.125</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 01:30:00</td><td>DEV-04</td><td>N4号产线</td><td>50</td><td>48</td><td>96.0</td><td>80.58</td><td>5.687</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 03:30:00</td><td>DEV-04</td><td>N4号产线</td><td>57</td><td>51</td><td>89.47</td><td>84.97</td><td>4.557</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 05:30:00</td><td>DEV-04</td><td>N4号产线</td><td>61</td><td>59</td><td>96.72</td><td>84.84</td><td>2.647</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 07:30:00</td><td>DEV-04</td><td>N4号产线</td><td>49</td><td>46</td><td>93.88</td><td>77.72</td><td>1.201</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 09:30:00</td><td>DEV-04</td><td>N4号产线</td><td>58</td><td>55</td><td>94.83</td><td>79.73</td><td>1.838</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 11:30:00</td><td>DEV-04</td><td>N4号产线</td><td>44</td><td>41</td><td>93.18</td><td>54.24</td><td>4.38</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 13:30:00</td><td>DEV-04</td><td>N4号产线</td><td>50</td><td>48</td><td>96.0</td><td>51.85</td><td>2.215</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 15:30:00</td><td>DEV-04</td><td>N4号产线</td><td>43</td><td>42</td><td>97.67</td><td>45.12</td><td>1.855</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 17:30:00</td><td>DEV-04</td><td>N4号产线</td><td>47</td><td>45</td><td>95.74</td><td>67.37</td><td>4.089</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 19:30:00</td><td>DEV-04</td><td>N4号产线</td><td>49</td><td>46</td><td>93.88</td><td>57.78</td><td>3.991</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 21:30:00</td><td>DEV-04</td><td>N4号产线</td><td>41</td><td>39</td><td>95.12</td><td>82.84</td><td>5.514</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-23 23:30:00</td><td>DEV-04</td><td>N4号产线</td><td>60</td><td>56</td><td>93.33</td><td>62.73</td><td>5.394</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 01:30:00</td><td>DEV-04</td><td>N4号产线</td><td>42</td><td>39</td><td>92.86</td><td>75.47</td><td>5.514</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 03:30:00</td><td>DEV-04</td><td>N4号产线</td><td>43</td><td>39</td><td>90.7</td><td>71.46</td><td>5.538</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 05:30:00</td><td>DEV-04</td><td>N4号产线</td><td>54</td><td>49</td><td>90.74</td><td>63.92</td><td>4.838</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 07:30:00</td><td>DEV-04</td><td>N4号产线</td><td>50</td><td>48</td><td>96.0</td><td>60.36</td><td>2.415</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 09:30:00</td><td>DEV-04</td><td>N4号产线</td><td>50</td><td>48</td><td>96.0</td><td>54.06</td><td>2.718</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 11:30:00</td><td>DEV-04</td><td>N4号产线</td><td>57</td><td>55</td><td>96.49</td><td>61.21</td><td>2.737</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 13:30:00</td><td>DEV-04</td><td>N4号产线</td><td>69</td><td>64</td><td>92.75</td><td>60.84</td><td>1.072</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 15:30:00</td><td>DEV-04</td><td>N4号产线</td><td>63</td><td>56</td><td>88.89</td><td>45.84</td><td>4.701</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 17:30:00</td><td>DEV-04</td><td>N4号产线</td><td>44</td><td>40</td><td>90.91</td><td>52.77</td><td>1.678</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 19:30:00</td><td>DEV-04</td><td>N4号产线</td><td>59</td><td>56</td><td>94.92</td><td>53.95</td><td>2.216</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 21:30:00</td><td>DEV-04</td><td>N4号产线</td><td>58</td><td>51</td><td>87.93</td><td>59.56</td><td>1.888</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-24 23:30:00</td><td>DEV-04</td><td>N4号产线</td><td>55</td><td>49</td><td>89.09</td><td>65.17</td><td>5.394</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 01:30:00</td><td>DEV-04</td><td>N4号产线</td><td>38</td><td>36</td><td>94.74</td><td>80.29</td><td>5.97</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 03:30:00</td><td>DEV-04</td><td>N4号产线</td><td>50</td><td>45</td><td>90.0</td><td>82.5</td><td>5.004</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 05:30:00</td><td>DEV-04</td><td>N4号产线</td><td>51</td><td>50</td><td>98.04</td><td>70.31</td><td>4.387</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 07:30:00</td><td>DEV-04</td><td>N4号产线</td><td>49</td><td>44</td><td>89.8</td><td>83.46</td><td>5.684</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 09:30:00</td><td>DEV-04</td><td>N4号产线</td><td>48</td><td>42</td><td>87.5</td><td>53.44</td><td>4.094</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 11:30:00</td><td>DEV-04</td><td>N4号产线</td><td>46</td><td>41</td><td>89.13</td><td>49.48</td><td>1.084</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 13:30:00</td><td>DEV-04</td><td>N4号产线</td><td>47</td><td>42</td><td>89.36</td><td>72.78</td><td>2.416</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 15:30:00</td><td>DEV-04</td><td>N4号产线</td><td>53</td><td>50</td><td>94.34</td><td>76.98</td><td>3.086</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 17:30:00</td><td>DEV-04</td><td>N4号产线</td><td>51</td><td>47</td><td>92.16</td><td>58.02</td><td>1.826</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 19:30:00</td><td>DEV-04</td><td>N4号产线</td><td>50</td><td>45</td><td>90.0</td><td>71.27</td><td>2.278</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 21:30:00</td><td>DEV-04</td><td>N4号产线</td><td>45</td><td>41</td><td>91.11</td><td>81.04</td><td>2.932</td><td>RUN</td></tr>
+    
+    <tr><td>2026-03-25 23:30:00</td><td>DEV-04</td><td>N4号产线</td><td>58</td><td>54</td><td>93.1</td><td>67.7</td><td>4.665</td><td>RUN</td></tr>
+    
+  </table>
+
+  <h2>附：列级出处与运行说明</h2>
+  <table>
+    <tr><th>列</th><th>出处</th></tr>
+    
+    <tr><td>device_id</td><td>文件原始</td></tr>
+    
+    <tr><td>line</td><td>派生·产线台账</td></tr>
+    
+    <tr><td>ok_qty</td><td>合成·seed=2026</td></tr>
+    
+    <tr><td>output</td><td>合成·seed=2026</td></tr>
+    
+    <tr><td>status</td><td>文件原始</td></tr>
+    
+    <tr><td>temp</td><td>文件原始</td></tr>
+    
+    <tr><td>ts</td><td>文件原始</td></tr>
+    
+    <tr><td>vib</td><td>合成·seed=2026</td></tr>
+    
+    <tr><td>yield_pct</td><td>派生·ok_qty/output</td></tr>
+    
+  </table>
+  <footer>
+    HTML 渲染路径：Jinja2 3.1.6（StrictUndefined+autoescape）<br>
+    可选依赖实况：已安装(原生启用): streamlit, plotly, jinja2, reportlab, pandas, yaml ｜ 缺失(降级兜底): 无<br>
+    交互仪表盘：streamlit 1.65.0 已安装：`streamlit run app.py` 起真仪表盘；离线无头验证入口 `python run.py --app-check`（streamlit.testing.v1.AppTest 执行同一份 app.py）<br>
+    日报生成耗时档位：&lt;1s（精确值见 output/timing.txt；预算
+    120.0s，C 层要求 &lt; 2 分钟 → 达标）
+  </footer>
+</body>
+</html>

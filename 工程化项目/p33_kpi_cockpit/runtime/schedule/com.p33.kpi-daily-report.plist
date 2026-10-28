@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.p33.kpi-daily-report</string>
+  <key>WorkingDirectory</key><string>/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit</string>
+  <key>ProgramArguments</key><array>
+    <string>/opt/anaconda3/envs/pp03/bin/python</string>
+    <string>run.py</string>
+    <string>--schedule-fire</string>
+    <string>--schedule-at</string>
+    <string>07:30</string>
+    <string>--quiet</string>
+  </array>
+  <key>StartCalendarInterval</key><dict>
+    <key>Hour</key><integer>7</integer>
+    <key>Minute</key><integer>30</integer>
+  </dict>
+  <key>StandardOutPath</key><string>runtime/launchd.log</string>
+  <key>StandardErrorPath</key><string>runtime/launchd.log</string>
+</dict>
+</plist>

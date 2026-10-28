@@ -48,35 +48,47 @@ def seed():
 
 
 def impact_path(device_id: str) -> dict:
-    """影响路径分析：该设备异常会波及哪些产线/上下游设备（运维决策核心查询）"""
+    """影响路径分析：该设备异常会波及哪些产线/上下游设备（运维决策核心查询）
+
+    工单点位 P7-3 答案要点：两句 Cypher——
+      ① (设备)-[:上游供电]->(下游设备)<-[:有设备]-(产线)  取"连带停产面"
+      ② (产线)-[:有设备]->(设备)                          取"自己所在产线"
+    工程红线：设备号**参数绑定**（$did）而不是 f-string 拼接——
+    拼字符串等于把 Cypher 注入开门（' OR '1'='1 就能改查询语义）。
+    affected_lines = own_lines ∪ collateral 涉及产线，正是工单"影响哪些产线"的答案。
+    """
     db = kuzu.Database(KUZU_DIR, read_only=True)
     con = kuzu.Connection(db)
-    res = con.execute(f"""
-        MATCH (d:设备 {{id: '{device_id}'}})-[r:上游供电]->(down:设备)
+    res = con.execute("""
+        MATCH (d:设备 {id: $did})-[r:上游供电]->(down:设备)
         MATCH (down)<-[:有设备]-(line:产线)
         RETURN down.id, down.name, line.id, line.name
-    """)
+    """, {"did": device_id})
     hits = []
     while res.has_next():
         row = res.get_next()
         hits.append({"downstream": row[0], "down_name": row[1],
                      "line": row[2], "line_name": row[3]})
-    lines = con.execute(f"""
-        MATCH (l:产线)-[:有设备]->(d:设备 {{id: '{device_id}'}}) RETURN l.id, l.name
-    """)
-    own = [lines.get_next()[0] for _ in range(lines.get_num_tuples())]
+    lines = con.execute("""
+        MATCH (l:产线)-[:有设备]->(d:设备 {id: $did}) RETURN l.id, l.name
+    """, {"did": device_id})
+    own = []
+    while lines.has_next():
+        own.append(lines.get_next()[0])
     con.close()
+    affected = sorted({*(h["line"] for h in hits), *own})
     return {"device": device_id, "own_lines": own,
-            "collateral": hits}
+            "collateral": hits, "affected_lines": affected}
 
 
 if __name__ == "__main__":
     import json
-    import shutil
     import os
+    import shutil
     if os.path.isdir(KUZU_DIR):
         shutil.rmtree(KUZU_DIR)          # 演示可重复（0.11为单文件库，两种都兼容）
     elif os.path.exists(KUZU_DIR):
         os.remove(KUZU_DIR)
     seed()
     print(json.dumps(impact_path("PUMP-03"), ensure_ascii=False, indent=1))
+    print(json.dumps(impact_path("FAN-02"), ensure_ascii=False, indent=1))

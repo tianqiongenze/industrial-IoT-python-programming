@@ -3,6 +3,15 @@ danger: 95.0
 batch_size: 3
 poll_rounds: 4
 backoff_base: 0.01
+retry_limit: 3
+rate_target: 95.0
+# 工单 P4 验收表里的三条硬线，按工单原文钉在这里（改它=改验收口径，报告里会如实翻成未达标）：
+#   rate_pass_line=95.0 及格(D)「采集率>95%」  rate_strict_target=99.5 优秀(B)「采集率≥99.5%」
+#   latency_target_ms=100 优秀(B)「延迟<100ms」 docs_min=8 及格(D)「系统文档」
+rate_pass_line: 95.0
+rate_strict_target: 99.5
+latency_target_ms: 100.0
+docs_min: 8
 unit: "c"
 seed: 7
 topk: 3
@@ -12,7 +21,24 @@ sources:
     host: 127.0.0.1
     port: 5020
     scale: 10
+    latency_ms: 12.0
   - id: PLC2
     host: 127.0.0.1
     port: 5021
     scale: 1
+    latency_ms: 8.0
+  - id: PLC3
+    host: 127.0.0.1
+    port: 5022
+    scale: 100
+    latency_ms: 20.0
+
+# 链路故障注入（可复现，非随机）：slots=该源会话内第几条读数(1 基)，
+# fail_attempts=恢复前连续失败的尝试次数；超过 retry_limit 则该条计入丢弃数。
+faults:
+  - id: PLC2
+    slots: [4, 7]
+    fail_attempts: 2
+  - id: PLC3
+    slots: [3]
+    fail_attempts: 4

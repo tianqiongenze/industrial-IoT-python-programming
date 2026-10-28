@@ -1,7 +1,16 @@
-warn: 80.0
-danger: 95.0
-n_records: 500
-index_col: device_id
-unit: "c"
-seed: 7
-topk: 3
+# P5 产线数据仓库与ORM —— 运行配置（改配置不改代码；每个键都在代码中被读取）
+db_url: sqlite:///output/warehouse.db   # SQLite 零安装；相对路径自动锚定本项目 output/
+buffer_db: ../../buffer.db              # P4 采集缓冲库；缺失时自动改用内置确定性替代源
+seed: 7                                 # 随机种子：两次运行 output 除报告时间戳外一致
+n_records: 500                          # 种子记录数（starter任务卡 T3 口径）
+batch_size: 100                         # 批量入库每批条数（每批一个事务提交）
+warn: 4.5                               # vib 预警线(mm/s)：达到即触发1级告警
+danger: 6.0                             # vib 危险线(mm/s)：达到即触发2级告警
+unit: "mm/s"                            # 振动测点工程单位口径
+topk: 3                                 # 告警Top-K设备 / 慢查询报告取前K条
+index_bench_rows: 20000                 # 索引基准副本表行数（大样本才有可测加速）；0 = 空基准，B层EXPLAIN证据即不成立
+index_bench_reps: 7                     # 索引基准重复次数（取中位数）
+buffer_stand_in_rows: 108               # buffer.db 缺失时的确定性替代源行数（设 0 = 无缓冲数据）
+min_stat_queries: 2                     # D层及格线：至少跑通几条统计查询（工单口径=2）
+n_plus_one_loader: joinedload           # B层N+1规避手段：joinedload / selectinload / lazy（lazy=不规避）
+p3_handoff: "output/p3_dashboard_handoff.csv"   # A层P3闭环交接文件（置空=关闭交接，A层判不达标）

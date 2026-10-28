@@ -1,0 +1,1 @@
+30 7 * * * cd /Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit && /opt/anaconda3/envs/pp03/bin/python run.py --schedule-fire --schedule-at 07:30 --config /Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit/config/rules.yaml >> output/schedule.log 2>&1

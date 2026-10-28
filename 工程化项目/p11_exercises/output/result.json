@@ -1,8 +1,700 @@
 {
-  "t1 单位换算": "36℃ → 96.80℉",
-  "t2 一元二次": "x^2-3x+2 → [2.0, 1.0]",
-  "t2 边界": "判别式<0 → ['complex']",
-  "t3 设备CRUD": "注册 3 台，删除后 3 台",
-  "t4 PLC子类": "扫描周期 100ms",
-  "t5 安全读取": "存在→hello / 不存在→FILE_NOT_FOUND"
+  "work_order": "P1.1",
+  "parser": "PyYAML",
+  "config_warnings": [],
+  "tier_requested": "A",
+  "exercises": {
+    "题1": {
+      "title": "温度单位换算器（℃→℉/K）",
+      "lines": [
+        "0.0℃ → 32.00℉ / 273.15K（判定:正常）",
+        "36.6℃ → 97.88℉ / 309.75K（判定:正常）",
+        "100.0℃ → 212.00℉ / 373.15K（判定:危险）",
+        "-273.15℃ → -459.67℉ / 0.00K（判定:正常）",
+        "85.0℃ → 185.00℉ / 358.15K（判定:预警）"
+      ],
+      "payload": {
+        "unit": "c",
+        "absolute_zero_c": -273.15,
+        "rows": [
+          {
+            "celsius": 0.0,
+            "fahrenheit": 32.0,
+            "kelvin": 273.15,
+            "level": "正常"
+          },
+          {
+            "celsius": 36.6,
+            "fahrenheit": 97.88000000000001,
+            "kelvin": 309.75,
+            "level": "正常"
+          },
+          {
+            "celsius": 100.0,
+            "fahrenheit": 212.0,
+            "kelvin": 373.15,
+            "level": "危险"
+          },
+          {
+            "celsius": -273.15,
+            "fahrenheit": -459.66999999999996,
+            "kelvin": 0.0,
+            "level": "正常"
+          },
+          {
+            "celsius": 85.0,
+            "fahrenheit": 185.0,
+            "kelvin": 358.15,
+            "level": "预警"
+          }
+        ],
+        "warn": 80.0,
+        "danger": 95.0
+      },
+      "verdict": "PASS"
+    },
+    "题2": {
+      "title": "一元二次方程求解",
+      "lines": [
+        "1x²-3x+2 → Δ=1 → x1=2 x2=1",
+        "1x²+2x+1 → Δ=0 → x1=-1 x2=-1",
+        "1x²+0x+1 → Δ=-4 → 无实根",
+        "2x²-8x+3 → Δ=40 → x1=3.58114 x2=0.418861",
+        "极值系数 {'a': 1, 'b': -1000000, 'c': 1} → 根 (999999.999999, 1.000000000001e-06)（韦达定理校验和=1e+06）"
+      ],
+      "payload": {
+        "rows": [
+          {
+            "a": 1,
+            "b": -3,
+            "c": 2,
+            "delta": 1.0,
+            "roots": [
+              2.0,
+              1.0
+            ]
+          },
+          {
+            "a": 1,
+            "b": 2,
+            "c": 1,
+            "delta": 0.0,
+            "roots": [
+              -1.0,
+              -1.0
+            ]
+          },
+          {
+            "a": 1,
+            "b": 0,
+            "c": 1,
+            "delta": -4.0,
+            "roots": null
+          },
+          {
+            "a": 2,
+            "b": -8,
+            "c": 3,
+            "delta": 40.0,
+            "roots": [
+              3.58113883008419,
+              0.4188611699158103
+            ]
+          },
+          {
+            "extreme": true,
+            "a": 1,
+            "b": -1000000,
+            "c": 1,
+            "roots": [
+              999999.999999,
+              1.000000000001e-06
+            ]
+          }
+        ]
+      },
+      "verdict": "PASS"
+    },
+    "题3": {
+      "title": "设备清单 CRUD（字典实现）",
+      "lines": [
+        "初始化 3 台，键=['01', '02', '03']",
+        "改 03 状态→运行（复核=运行）",
+        "删 02：3 台 → 2 台（键已真正弹出，删除生效）",
+        "按 topk=2 取前 2 台：01/注塑机A, 03/空压机C"
+      ],
+      "payload": {
+        "before": 3,
+        "after": 2,
+        "removed": {
+          "dev_id": "02",
+          "name": "冷却泵B",
+          "status": "停止"
+        },
+        "keys": [
+          "01",
+          "03"
+        ],
+        "rows": [
+          {
+            "dev_id": "01",
+            "name": "注塑机A",
+            "status": "运行"
+          },
+          {
+            "dev_id": "03",
+            "name": "空压机C",
+            "status": "运行"
+          }
+        ],
+        "updated": "空压机C"
+      },
+      "verdict": "PASS"
+    },
+    "题4": {
+      "title": "Device 类 + PLC 子类（含 scan）",
+      "lines": [
+        "基类 Device.start() → 基类对照机启动",
+        "子类 PLC.start() 覆盖 → S7-1200启动, 扫描8ms（status=运行）",
+        "isinstance(PLC, Device)=True；scan_ms=8ms（上限 10000ms）",
+        "第1轮扫描: S7-1200 status=运行 cycle=8ms",
+        "第2轮扫描: S7-1200 status=运行 cycle=8ms",
+        "第3轮扫描: S7-1200 status=运行 cycle=8ms",
+        "扫描周期定级（阈值 500/1000ms）：正常"
+      ],
+      "payload": {
+        "plc": {
+          "dev_id": "02",
+          "name": "S7-1200",
+          "status": "运行",
+          "scan_ms": 8
+        },
+        "base": {
+          "dev_id": "00",
+          "name": "基类对照机",
+          "status": "运行"
+        },
+        "scans": [
+          "第1轮扫描: S7-1200 status=运行 cycle=8ms",
+          "第2轮扫描: S7-1200 status=运行 cycle=8ms",
+          "第3轮扫描: S7-1200 status=运行 cycle=8ms"
+        ],
+        "level": "正常",
+        "scan_warn_ms": 500,
+        "scan_danger_ms": 1000
+      },
+      "verdict": "PASS"
+    },
+    "题5": {
+      "title": "异常保护文件读取器",
+      "lines": [
+        "正常             → 设备清单表头：id,name,status",
+        "缺失             → FILE_NOT_FOUND",
+        "坏编码            → BAD_ENCODING",
+        "目录             → IS_DIRECTORY",
+        "空输入            → EMPTY_PATH",
+        "空输入(None)      → EMPTY_PATH"
+      ],
+      "payload": {
+        "probes": {
+          "正常": "设备清单表头：id,name,status",
+          "缺失": "FILE_NOT_FOUND",
+          "坏编码": "BAD_ENCODING",
+          "目录": "IS_DIRECTORY",
+          "空输入": "EMPTY_PATH",
+          "空输入(None)": "EMPTY_PATH"
+        },
+        "files": {
+          "sample": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/sample_utf8.txt",
+          "bad": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/bad_encoding.bin",
+          "missing": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/no_such_file.txt",
+          "empty": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/empty.txt",
+          "large": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/large.txt",
+          "dir": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/dir_demo",
+          "large_lines": 200
+        }
+      },
+      "verdict": "PASS"
+    }
+  },
+  "selfcheck": {
+    "题1": {
+      "total": 10,
+      "passed": 10,
+      "boundary_total": 7,
+      "boundary_passed": 7,
+      "failed": [],
+      "pass": true,
+      "boundary_enough": true
+    },
+    "题2": {
+      "total": 9,
+      "passed": 9,
+      "boundary_total": 6,
+      "boundary_passed": 6,
+      "failed": [],
+      "pass": true,
+      "boundary_enough": true
+    },
+    "题3": {
+      "total": 10,
+      "passed": 10,
+      "boundary_total": 7,
+      "boundary_passed": 7,
+      "failed": [],
+      "pass": true,
+      "boundary_enough": true
+    },
+    "题4": {
+      "total": 12,
+      "passed": 12,
+      "boundary_total": 10,
+      "boundary_passed": 10,
+      "failed": [],
+      "pass": true,
+      "boundary_enough": true
+    },
+    "题5": {
+      "total": 9,
+      "passed": 9,
+      "boundary_total": 7,
+      "boundary_passed": 7,
+      "failed": [],
+      "pass": true,
+      "boundary_enough": true
+    }
+  },
+  "tier_gates": {
+    "gates": [
+      {
+        "tier": "D",
+        "item": "正确 5/5 题（及格线 ≥3 题）",
+        "ok": true
+      },
+      {
+        "tier": "D",
+        "item": "PEP 8（内置子集）达标率 100.0%（检查项通过 4794/4795） ≥ D 层线 75.0%",
+        "ok": true
+      },
+      {
+        "tier": "D",
+        "item": "有基础注释：有 docstring 的公开函数 53/53、模块 13/13",
+        "ok": true
+      },
+      {
+        "tier": "C",
+        "item": "第4题正确=是（正确 5/5 题 ≥ 良好线 4 题）",
+        "ok": true
+      },
+      {
+        "tier": "C",
+        "item": "命名有意义达标率 100.0%（公开函数/方法名合格 72/72） ≥ 命名线 90.0%",
+        "ok": true
+      },
+      {
+        "tier": "B",
+        "item": "题1-5 全部通过（五题全对，正确 5/5 ≥ 优秀线 5 题）",
+        "ok": true
+      },
+      {
+        "tier": "B",
+        "item": "内置断言 B 层子集全过",
+        "ok": true
+      },
+      {
+        "tier": "B",
+        "item": "命名规范检查：snake_case/PascalCase 违规数=0",
+        "ok": true
+      },
+      {
+        "tier": "B",
+        "item": "PEP 8（内置子集）达标率 100.0%（检查项通过 4794/4795） ≥ B 层线 85.0%",
+        "ok": true
+      },
+      {
+        "tier": "B",
+        "item": "结构清晰：工程四件套 4/4｜一题一函数 5/5（均含 docstring 5/5）｜src 模块有 docstring 12/12",
+        "ok": true
+      },
+      {
+        "tier": "A",
+        "item": "优秀(B)层达标（超优=优秀+附加项）",
+        "ok": true
+      },
+      {
+        "tier": "A",
+        "item": "每题附测试用例：pytest 命名用例 题1 24｜题2 17｜题3 26｜题4 19｜题5 18（每题线 ≥1）",
+        "ok": true
+      },
+      {
+        "tier": "A",
+        "item": "每题 ≥3 条边界断言（空输入/极值/异常）全过",
+        "ok": true
+      },
+      {
+        "tier": "A",
+        "item": "迁移笔记《C→Python》：文件存在=是｜正文实测 15 条（要求 ≥10）｜逐题常见错误覆盖 5/5｜P1.2 布局映射等必备章节齐全=是",
+        "ok": true
+      },
+      {
+        "tier": "A",
+        "item": "ℹ pytest 全绿不在此代跑：由 `python -m pytest -q -p no:cacheprovider` 现场复核",
+        "ok": null
+      },
+      {
+        "tier": "A",
+        "item": "讲解抽签：题3（seed=7，确定性，可复现）",
+        "ok": true
+      },
+      {
+        "tier": "保底",
+        "item": "跟做题1/2（能运行出结果）",
+        "ok": true
+      },
+      {
+        "tier": "保底",
+        "item": "改参数再跑：36.6℃ 与 100℃ 输出不同",
+        "ok": true
+      },
+      {
+        "tier": "保底",
+        "item": "记录一处差异（迁移笔记「引用语义」条目 + tests/test_tier_d.py 差异断言）",
+        "ok": true
+      }
+    ],
+    "tier_pass": {
+      "D": true,
+      "C": true,
+      "B": true,
+      "A": true
+    },
+    "tiers": {
+      "D": {
+        "name": "及格",
+        "criterion": "≥3题正确运行；PEP 8≥75%；有基础注释",
+        "summary": "D 层 及格（≥3题正确运行；PEP 8≥75%；有基础注释）: 正确 5/5 题｜PEP 8 子集达标率 100.0%（检查项通过 4794/4795）≥ 75.0%｜有 docstring 的公开函数 53/53、模块 13/13 → 达标",
+        "verdict": "达标"
+      },
+      "C": {
+        "name": "良好",
+        "criterion": "4题；命名有意义",
+        "summary": "C 层 良好（4题；命名有意义）: 第4题 正确、正确 5/5（线 ≥4）｜命名有意义达标率 100.0%（合格 72/72）≥ 90.0% → 达标",
+        "verdict": "达标"
+      },
+      "B": {
+        "name": "优秀",
+        "criterion": "5题全对；PEP 8≥85%；结构清晰",
+        "summary": "B 层 优秀（5题全对；PEP 8≥85%；结构清晰）: 正确 5/5｜PEP 8 子集达标率 100.0%（检查项通过 4794/4795）≥ 85.0%｜结构：四件套 4/4、一题一函数 5/5、src 模块 docstring 12/12 → 达标",
+        "verdict": "达标"
+      },
+      "A": {
+        "name": "超优",
+        "criterion": "优秀+每题附测试用例与《迁移笔记》",
+        "summary": "A 层 超优（优秀+每题附测试用例与《迁移笔记》）: 每题 pytest 用例 题1 24｜题2 17｜题3 26｜题4 19｜题5 18（线 ≥1）｜迁移笔记 存在=是 正文 15 条（≥10）逐题易错点 5/5 必备章节=是 → 达标",
+        "verdict": "达标"
+      },
+      "保底": {
+        "name": "保底自检（不计入工单档位）",
+        "counts_for_work_order": false,
+        "criterion": "课堂跟做保底：题1/2 跑通 + 改参数再跑 + 记录一处差异",
+        "summary": "保底自检（不计入工单档位）: 3/3 项通过 → 达标（仅课堂跟做留痕，不参与工单定档）",
+        "verdict": "达标"
+      }
+    },
+    "floor_pass": true
+  },
+  "tiers": {
+    "D": {
+      "name": "及格",
+      "criterion": "≥3题正确运行；PEP 8≥75%；有基础注释",
+      "summary": "D 层 及格（≥3题正确运行；PEP 8≥75%；有基础注释）: 正确 5/5 题｜PEP 8 子集达标率 100.0%（检查项通过 4794/4795）≥ 75.0%｜有 docstring 的公开函数 53/53、模块 13/13 → 达标",
+      "verdict": "达标"
+    },
+    "C": {
+      "name": "良好",
+      "criterion": "4题；命名有意义",
+      "summary": "C 层 良好（4题；命名有意义）: 第4题 正确、正确 5/5（线 ≥4）｜命名有意义达标率 100.0%（合格 72/72）≥ 90.0% → 达标",
+      "verdict": "达标"
+    },
+    "B": {
+      "name": "优秀",
+      "criterion": "5题全对；PEP 8≥85%；结构清晰",
+      "summary": "B 层 优秀（5题全对；PEP 8≥85%；结构清晰）: 正确 5/5｜PEP 8 子集达标率 100.0%（检查项通过 4794/4795）≥ 85.0%｜结构：四件套 4/4、一题一函数 5/5、src 模块 docstring 12/12 → 达标",
+      "verdict": "达标"
+    },
+    "A": {
+      "name": "超优",
+      "criterion": "优秀+每题附测试用例与《迁移笔记》",
+      "summary": "A 层 超优（优秀+每题附测试用例与《迁移笔记》）: 每题 pytest 用例 题1 24｜题2 17｜题3 26｜题4 19｜题5 18（线 ≥1）｜迁移笔记 存在=是 正文 15 条（≥10）逐题易错点 5/5 必备章节=是 → 达标",
+      "verdict": "达标"
+    },
+    "保底": {
+      "name": "保底自检（不计入工单档位）",
+      "counts_for_work_order": false,
+      "criterion": "课堂跟做保底：题1/2 跑通 + 改参数再跑 + 记录一处差异",
+      "summary": "保底自检（不计入工单档位）: 3/3 项通过 → 达标（仅课堂跟做留痕，不参与工单定档）",
+      "verdict": "达标"
+    }
+  },
+  "style": {
+    "checked_files": 25,
+    "total": 4795,
+    "passed": 4794,
+    "score": 100.0,
+    "per_file": [
+      {
+        "file": "p11_exercises/run.py",
+        "total": 34,
+        "passed": 34,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/__init__.py",
+        "total": 14,
+        "passed": 14,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/cli.py",
+        "total": 73,
+        "passed": 73,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/config.py",
+        "total": 349,
+        "passed": 349,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/core.py",
+        "total": 348,
+        "passed": 348,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/exercises.py",
+        "total": 169,
+        "passed": 169,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/io_utils.py",
+        "total": 109,
+        "passed": 109,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/notes.py",
+        "total": 190,
+        "passed": 190,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/pipeline.py",
+        "total": 271,
+        "passed": 271,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/report.py",
+        "total": 52,
+        "passed": 52,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/selfcheck.py",
+        "total": 589,
+        "passed": 588,
+        "score": 99.8
+      },
+      {
+        "file": "exercise_five/stylecheck.py",
+        "total": 402,
+        "passed": 402,
+        "score": 100.0
+      },
+      {
+        "file": "exercise_five/testmap.py",
+        "total": 65,
+        "passed": 65,
+        "score": 100.0
+      },
+      {
+        "file": "tests/__init__.py",
+        "total": 11,
+        "passed": 11,
+        "score": 100.0
+      },
+      {
+        "file": "tests/conftest.py",
+        "total": 46,
+        "passed": 46,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_config.py",
+        "total": 173,
+        "passed": 173,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_core.py",
+        "total": 373,
+        "passed": 373,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_exercises.py",
+        "total": 90,
+        "passed": 90,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_pipeline_cli.py",
+        "total": 321,
+        "passed": 321,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_selfcheck.py",
+        "total": 72,
+        "passed": 72,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_stylecheck.py",
+        "total": 117,
+        "passed": 117,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_tier_a.py",
+        "total": 226,
+        "passed": 226,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_tier_b.py",
+        "total": 212,
+        "passed": 212,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_tier_c.py",
+        "total": 255,
+        "passed": 255,
+        "score": 100.0
+      },
+      {
+        "file": "tests/test_tier_d.py",
+        "total": 234,
+        "passed": 234,
+        "score": 100.0
+      }
+    ],
+    "max_line_length": 79,
+    "naming_violations": 0,
+    "missing_docstrings": 0,
+    "long_lines": 1,
+    "top_violations": [
+      [
+        "exercise_five/selfcheck.py",
+        "E501",
+        336,
+        "行长 80>79"
+      ]
+    ],
+    "comments": {
+      "modules_total": 13,
+      "modules_documented": 13,
+      "funcs_total": 53,
+      "funcs_documented": 53
+    },
+    "naming_checked": 72,
+    "naming_passed": 72,
+    "naming_rate": 100.0,
+    "naming_meaning_violations": [],
+    "structure": {
+      "parts_total": 4,
+      "parts_present": 4,
+      "exercise_functions": 5,
+      "exercise_functions_documented": 5,
+      "src_modules_total": 12,
+      "src_modules_documented": 12
+    },
+    "question_tests": {
+      "题1": 24,
+      "题2": 17,
+      "题3": 26,
+      "题4": 19,
+      "题5": 18
+    }
+  },
+  "style_violations": [
+    [
+      "exercise_five/selfcheck.py",
+      "E501",
+      336,
+      "行长 80>79"
+    ]
+  ],
+  "tools": {
+    "pylint": {
+      "available": false,
+      "version": "",
+      "command": "/opt/anaconda3/envs/pp03/bin/python -m pylint --version",
+      "reason": "未安装（命令退出码 1）"
+    },
+    "flake8": {
+      "available": false,
+      "version": "",
+      "command": "/opt/anaconda3/envs/pp03/bin/python -m flake8 --version",
+      "reason": "未安装（命令退出码 1）"
+    },
+    "black": {
+      "available": false,
+      "version": "",
+      "command": "/opt/anaconda3/envs/pp03/bin/python -m black --version",
+      "reason": "未安装（命令退出码 1）"
+    },
+    "pre-commit": {
+      "available": false,
+      "version": "",
+      "command": "/opt/anaconda3/envs/pp03/bin/python -m pre_commit --version",
+      "reason": "未安装（命令退出码 1）"
+    }
+  },
+  "pylint": {
+    "available": false,
+    "score": null,
+    "note": "未安装（命令退出码 1）"
+  },
+  "notes": {
+    "entries": 15,
+    "explain": "题3",
+    "seed": 7,
+    "required": 10,
+    "verified_entries": 15,
+    "path": "docs/09-C转Python迁移笔记.md",
+    "pass": true,
+    "questions_covered": 5,
+    "questions_total": 5,
+    "sections_found": 2,
+    "sections_total": 2,
+    "sections_complete": true,
+    "complete": true,
+    "abs_path": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/docs/09-C转Python迁移笔记.md",
+    "chars": 4068,
+    "skipped": false,
+    "exists": true
+  },
+  "samples": {
+    "sample": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/sample_utf8.txt",
+    "bad": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/bad_encoding.bin",
+    "missing": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/no_such_file.txt",
+    "empty": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/empty.txt",
+    "large": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/large.txt",
+    "dir": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p11_exercises/output/samples/dir_demo"
+  }
 }

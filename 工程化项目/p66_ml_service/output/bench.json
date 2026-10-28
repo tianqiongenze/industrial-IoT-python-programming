@@ -1,0 +1,17 @@
+{
+  "n_requests": 100,
+  "warmup": 5,
+  "warmup_first_ms": 36.476,
+  "mean_ms": 0.914,
+  "p50_ms": 0.895,
+  "p95_ms": 1.06,
+  "p99_ms": 1.194,
+  "max_ms": 1.238,
+  "qps": 1093.9,
+  "client_timed": 100,
+  "requests_sent": 105,
+  "server_recorded": 105,
+  "records_match": true,
+  "note": "真实 HTTP 往返计时（本机临时端口，单并发顺序压测；验收口径看 p95 不看均值）",
+  "source": "首次运行/--bench 实测（进程内临时端口，端口留给 --serve）；其余运行读此缓存"
+}

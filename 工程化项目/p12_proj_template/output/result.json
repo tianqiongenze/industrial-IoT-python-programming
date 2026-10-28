@@ -1,19 +1,212 @@
 {
   "name": "pump-ops",
-  "n_files": 6,
-  "made": [],
-  "kept": [
-    "README.md",
-    ".gitignore",
-    "requirements.txt",
-    "src/__init__.py",
-    "tests/__init__.py",
-    "run.py"
-  ],
+  "n_files": 15,
+  "bytes_total": 4157,
+  "files": {
+    ".gitignore": 97,
+    ".pre-commit-config.yaml": 507,
+    "README.md": 889,
+    "config/settings.yaml": 54,
+    "pyproject.toml": 521,
+    "requirements-dev.txt": 173,
+    "requirements.txt": 85,
+    "run.py": 272,
+    "scripts/git_dev_branch.sh": 408,
+    "scripts/setup_venv.sh": 407,
+    "src/__init__.py": 50,
+    "src/main.py": 241,
+    "src/utils.py": 96,
+    "tests/__init__.py": 0,
+    "tests/test_main.py": 357
+  },
   "verify": {
     "missing": [],
     "empty_dirs": [],
-    "junk": []
+    "junk": [],
+    "unexpected": []
   },
-  "passed": true
+  "passed": true,
+  "layers": {
+    "dirs_present": 4,
+    "dirs_total": 4,
+    "dirs_missing": [],
+    "entry_total": 1,
+    "entry_resolved": 1,
+    "entry_failed": [],
+    "gitignore_venv": true,
+    "venv_cmd": true,
+    "venv_pip_restore": true,
+    "git_init": true,
+    "runtime_dep_total": 2,
+    "runtime_dep_pinned": 2,
+    "dev_dep_total": 4,
+    "dev_dep_pinned": 4,
+    "dev_ref_runtime": true,
+    "dev_branch": true,
+    "dev_checkout": true,
+    "no_ff_merge": true,
+    "pre_commit_declared": true,
+    "hook_declared": [
+      "black",
+      "flake8"
+    ],
+    "hook_missing": [],
+    "readme_declared": true,
+    "readme_bytes": 889,
+    "readme_titled": true,
+    "git_repo_seq": true,
+    "venv_activate": true,
+    "pytest_cfg_declared": true,
+    "generated_tests": 3,
+    "hook_with_entry": 2,
+    "fail_under_declared": false,
+    "dep_dupes": [],
+    "ci_workflows": []
+  },
+  "tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "tier_lines": [
+    "D层 跟做跑通: 模板 15 个文件已落盘（共 4157 字节）｜[project.scripts] 入口解析 1/1｜四目录齐备 4/4｜自检 missing=0 empty_dirs=0 junk=0 → 通过",
+    "C层 venv+仓库: setup_venv.sh 含 python -m venv venv=是、pip install -r requirements.txt=是、git init=是｜.gitignore 屏蔽 venv/=是 → 达标",
+    "B层 依赖可还原+dev分支: 运行依赖 2/2 条钉版本下限｜开发依赖 4/4 条钉下限，-r 引用 requirements.txt=是｜git_dev_branch.sh 含 git branch dev=是、git checkout dev=是、--no-ff 合并=是 → 达标",
+    "A层 pre-commit 闸门: .pre-commit-config.yaml 声明钩子 2 个（black, flake8）｜配置要求工具 2 个，缺钩子 0 个｜本机可导入闸门工具 0/2 → 闸门文件 达标；未安装的工具本次未运行（不谎报）"
+  ],
+  "workorder_rows": {
+    "D": "conda环境激活可用+仓库初始化+结构完整+README",
+    "C": "检查工具配置生效；pytest通过",
+    "B": "依赖可还原（requirements完整）；dev分支规范合并",
+    "A": "优秀+GitHub Actions CI或pre-commit钩子"
+  },
+  "workorder_tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "workorder_lines": [
+    "档位口径说明：本节判的是工单《P1.2》验收标准四行原文，与上面「分层达标」的课堂四档（D 跟做 / C 基础 / B 标准 / A 进阶拓展）不同轴；两节各判各的、互不覆写。凡一档还有本机取不了证的子项（要真开 shell / 真联网 / 真触发 git 钩子），该行只写「本节取证项 通过」，绝不写「达标」。",
+    "工单及格(D)「conda环境激活可用+仓库初始化+结构完整+README」: 结构完整=是（四目录 4/4、模板缺失 0、空目录 0、.pyc 0）｜README.md 已落盘 889 字节且首行为一级标题=是｜仓库初始化三连（git init / git add . / git commit -m）=是｜venv 激活命令写在 setup_venv.sh=是｜本流水线解释器位于 conda 环境目录=是 → 本节取证项 通过",
+    "    未取证项（须课堂/CI 侧补跑）：conda activate 后 python -V 的课堂截图：本节只读出解释器确实在 conda 环境目录（/opt/anaconda3/envs/pp03/bin/python），不在 shell 里执行激活",
+    "工单良好(C)「检查工具配置生效；pytest通过」: 检查工具配置：2 个钩子全部带 entry（2/2，black, flake8）｜配置要求的工具缺口 0 个｜pytest 配置 testpaths 已声明=是｜生成骨架真实加载：入口 main() 返回 0、自带 test_ 函数 3 个通过 3 个失败 0 个｜--fail-under 评分 entry 已声明=否 → 本节取证项 通过",
+    "    未取证项（须课堂/CI 侧补跑）：pre-commit run --all-files 实跑（工具能否导入见「规范闸门环境探测」节）；用 pytest 命令行跑一遍生成骨架（本节只在进程内直接调用它自带的 test_ 函数）；pylint 评分截图（工单提交物要求 ≥8.5/10）：本次 lint_tools 未含 pylint，故 --fail-under=8.5 的 entry 未生成；把它加进 lint_tools 并在装有 pylint 的机器上运行即得该截图",
+    "工单优秀(B)「依赖可还原（requirements完整）；dev分支规范合并」: 运行依赖 2/2 条钉下限｜开发依赖 4/4 条钉下限｜-r 引用 requirements.txt=是｜与运行依赖重名的开发项 0 个（无）｜git branch dev=是、git checkout dev=是、--no-ff 合并=是 → 本节取证项 通过",
+    "    未取证项（须课堂/CI 侧补跑）：pip install -r requirements.txt 实装（课程解释器离线，不联网）；在真实 git 仓库里跑一次 dev → main 的 --no-ff 合并",
+    "工单超优(A)「优秀+GitHub Actions CI或pre-commit钩子」: pre-commit 钩子文件已产出=是（声明 2 个：black, flake8）｜.github/workflows 下 CI 文件 0 个｜工单优秀(B) 档前置=成立 → 本节取证项 通过",
+    "    未取证项（须课堂/CI 侧补跑）：GitHub Actions CI 未产出（工单原文是『CI 或 pre-commit 钩子』，本项目取后一支）；pre-commit install 后由 git 在 commit 前真拦截"
+  ],
+  "workorder_unmeasured": {
+    "D": [
+      "conda activate 后 python -V 的课堂截图：本节只读出解释器确实在 conda 环境目录（/opt/anaconda3/envs/pp03/bin/python），不在 shell 里执行激活"
+    ],
+    "C": [
+      "pre-commit run --all-files 实跑（工具能否导入见「规范闸门环境探测」节）",
+      "用 pytest 命令行跑一遍生成骨架（本节只在进程内直接调用它自带的 test_ 函数）",
+      "pylint 评分截图（工单提交物要求 ≥8.5/10）：本次 lint_tools 未含 pylint，故 --fail-under=8.5 的 entry 未生成；把它加进 lint_tools 并在装有 pylint 的机器上运行即得该截图"
+    ],
+    "B": [
+      "pip install -r requirements.txt 实装（课程解释器离线，不联网）",
+      "在真实 git 仓库里跑一次 dev → main 的 --no-ff 合并"
+    ],
+    "A": [
+      "GitHub Actions CI 未产出（工单原文是『CI 或 pre-commit 钩子』，本项目取后一支）",
+      "pre-commit install 后由 git 在 commit 前真拦截"
+    ]
+  },
+  "workorder_evidence": {
+    "skeleton_smoke": {
+      "imported": true,
+      "entry_returned": 0,
+      "entry_spoke": true,
+      "tests_found": 3,
+      "tests_passed": [
+        "test_convert",
+        "test_convert_boundary_zero",
+        "test_main_runs"
+      ],
+      "tests_failed": [],
+      "error": ""
+    },
+    "conda_env": {
+      "executable": "/opt/anaconda3/envs/pp03/bin/python",
+      "prefix": "/opt/anaconda3/envs/pp03",
+      "in_conda_envs": true
+    },
+    "readme_bytes": 889,
+    "generated_tests": 3,
+    "hook_with_entry": 2,
+    "ci_workflows": [],
+    "dep_dupes": []
+  },
+  "lint_tools": [
+    "black",
+    "flake8"
+  ],
+  "emit_pre_commit": true,
+  "overwrite_existing": true,
+  "python_version": ">=3.10",
+  "deps": [
+    "numpy>=1.21",
+    "pandas>=1.5"
+  ],
+  "dev_deps": [
+    "pytest>=8.0",
+    "black>=23.0",
+    "flake8>=6.0",
+    "pre-commit>=3.0"
+  ],
+  "probes": {
+    "black": {
+      "installed": false,
+      "version": ""
+    },
+    "flake8": {
+      "installed": false,
+      "version": ""
+    },
+    "isort": {
+      "installed": false,
+      "version": ""
+    },
+    "pre_commit": {
+      "installed": false,
+      "version": ""
+    },
+    "pylint": {
+      "installed": false,
+      "version": ""
+    },
+    "pytest": {
+      "installed": true,
+      "version": "9.1.1"
+    },
+    "ruff": {
+      "installed": false,
+      "version": ""
+    }
+  },
+  "probe_summary": "本机可导入 1/7：pytest ｜ 缺失 6 个：black, flake8, isort, pre_commit, pylint, ruff",
+  "config_echo": {
+    "project_name": "pump-ops",
+    "deps": [
+      "numpy>=1.21",
+      "pandas>=1.5"
+    ],
+    "dev_deps": [
+      "pytest>=8.0",
+      "black>=23.0",
+      "flake8>=6.0",
+      "pre-commit>=3.0"
+    ],
+    "lint_tools": [
+      "black",
+      "flake8"
+    ],
+    "python_version": ">=3.10",
+    "emit_pre_commit": true,
+    "overwrite_existing": true
+  }
 }

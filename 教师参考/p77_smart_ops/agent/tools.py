@@ -5,7 +5,7 @@
 """
 import json
 
-from config import CLF_FILE
+from config import CACHE_TTL_PRED, CLF_FILE
 
 from stores import graph, kv, relational, timeseries, vector_store
 
@@ -47,22 +47,31 @@ TOOLS_SPEC = [
 
 
 def model_predict(device: str) -> dict:
-    """缓存优先的模型推理：同设备10秒内重复问直接命中KV（演示缓存价值）"""
+    """缓存优先的模型推理：同设备 CACHE_TTL_PRED 秒内重复问直接命中KV（演示缓存价值）
+
+    缓存三问在这里逐条落地：什么值得缓存（贵的推理）、锁多久（TTL 外置配置）、
+    过期谁负责（后端 Redis/diskcache 的 TTL，代码不管清理）。
+    """
     ck = f"pred:{device}"
     hit = KV.get(ck)
     if hit:
-        return {"device": device, "pred": json.loads(hit), "cache": "HIT"}
+        return {"device": device, "pred": json.loads(hit), "cache": "HIT",
+                "ttl": CACHE_TTL_PRED}
     feats = timeseries.window_feats(device)
+    if not feats.get("samples"):                       # 无采样：不拿零值硬喂模型
+        return {"device": device,
+                "pred": {"label": None, "proba_wear": None, "feats": feats},
+                "cache": "MISS", "error": feats.get("note", "窗口内无采样")}
     import joblib
     import numpy as np
-    clf = joblib.load(CLF_FILE)
+    clf = joblib.load(CLF_FILE)                        # 缺模型即抛 FileNotFoundError（不静默假分数）
     x = np.array([[feats["avg_vib"], feats["max_vib"], feats["slope"],
                    feats["last_vib"], feats["samples"] / 100.0]])
     proba = clf.predict_proba(x)[0].tolist()
     out = {"label": int(proba[1] > 0.5), "proba_wear": round(proba[1], 3),
            "feats": feats}
-    KV.put(ck, json.dumps(out, ensure_ascii=False), ttl=10)
-    return {"device": device, "pred": out, "cache": "MISS"}
+    KV.put(ck, json.dumps(out, ensure_ascii=False), ttl=CACHE_TTL_PRED)
+    return {"device": device, "pred": out, "cache": "MISS", "ttl": CACHE_TTL_PRED}
 
 
 REGISTRY = {
@@ -75,6 +84,8 @@ REGISTRY = {
 
 
 def run_tool(name: str, arguments: dict) -> dict:
+    if name not in REGISTRY:                    # 工具名幻觉防护：给 LLM 可读错误而非 KeyError
+        return {"error": f"未知工具 {name}", "available": sorted(REGISTRY)}
     return REGISTRY[name](arguments)
 
 

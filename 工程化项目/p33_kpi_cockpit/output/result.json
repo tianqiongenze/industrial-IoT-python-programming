@@ -1,5 +1,134 @@
 {
-  "rows": [
+  "work_order": "P3",
+  "project": "p33_kpi_cockpit",
+  "source_mode": "clean",
+  "source": "P2.1 清洁产出 ../p21_pandas_clean/output/clean.csv (sha256=625d68705c79, 1186 行)",
+  "provenance": {
+    "ts": "文件原始",
+    "device_id": "文件原始",
+    "line": "派生·产线台账",
+    "output": "合成·seed=2026",
+    "ok_qty": "合成·seed=2026",
+    "yield_pct": "派生·ok_qty/output",
+    "temp": "文件原始",
+    "vib": "合成·seed=2026",
+    "status": "文件原始"
+  },
+  "window": {
+    "start": "2026-03-01",
+    "end": "2026-03-25",
+    "devices": [
+      "DEV-01",
+      "DEV-02",
+      "DEV-03",
+      "DEV-04"
+    ],
+    "rows_all": 1186,
+    "rows_window": 1186,
+    "days": 25
+  },
+  "kpis": [
+    {
+      "value": 60273,
+      "text": "60,273",
+      "raw": 60273,
+      "total": null,
+      "name": "总产量",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 92.4,
+      "text": "92.40%",
+      "raw": 92.4,
+      "total": null,
+      "name": "平均良率",
+      "delta": "",
+      "tone": "warn"
+    },
+    {
+      "value": 4,
+      "text": "4/4",
+      "raw": 4,
+      "total": 4,
+      "name": "设备在线数",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 357,
+      "text": "357",
+      "raw": 357,
+      "total": null,
+      "name": "今日告警数",
+      "delta": "",
+      "tone": "error"
+    },
+    {
+      "value": 1.0046,
+      "text": "100.5%",
+      "raw": 1.0,
+      "total": null,
+      "name": "效率对标",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 83.27,
+      "text": "83.27%",
+      "raw": 83.27,
+      "total": null,
+      "name": "OEE均值",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 95.52,
+      "text": "95.52%",
+      "raw": 95.52,
+      "total": null,
+      "name": "计划达成率",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 64.85,
+      "text": "64.85 ℃",
+      "raw": 64.85,
+      "total": null,
+      "name": "平均温度",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 5.999,
+      "text": "5.999 mm/s",
+      "raw": 5.999,
+      "total": null,
+      "name": "最高振动",
+      "delta": "",
+      "tone": "error"
+    }
+  ],
+  "kpi_names": [
+    "总产量",
+    "平均良率",
+    "设备在线数",
+    "今日告警数",
+    "效率对标",
+    "OEE均值",
+    "计划达成率",
+    "平均温度",
+    "最高振动"
+  ],
+  "required_kpis": [
+    "总产量",
+    "平均良率",
+    "设备在线数",
+    "今日告警数",
+    "效率对标"
+  ],
+  "ledger": [
     {
       "line": "一号产线",
       "planned": 960,
@@ -17,7 +146,386 @@
       "oee": 83.4,
       "good_rate": 0.9814,
       "plan_rate": 0.9595
+    },
+    {
+      "line": "三号产线",
+      "planned": 720,
+      "produced": 689,
+      "good": 655,
+      "oee": 79.8,
+      "good_rate": 0.9507,
+      "plan_rate": 0.9569
     }
   ],
-  "worst": "二号产线"
+  "gauge": {
+    "value": 92.4,
+    "delta": -2.6,
+    "tone": "warn"
+  },
+  "device_status": [
+    {
+      "device_id": "DEV-01",
+      "status": "RUN",
+      "alarms": 100,
+      "over_temp": 0,
+      "n": 296,
+      "tone": "error",
+      "light": "红灯"
+    },
+    {
+      "device_id": "DEV-02",
+      "status": "RUN",
+      "alarms": 84,
+      "over_temp": 0,
+      "n": 296,
+      "tone": "error",
+      "light": "红灯"
+    },
+    {
+      "device_id": "DEV-03",
+      "status": "RUN",
+      "alarms": 73,
+      "over_temp": 1,
+      "n": 297,
+      "tone": "error",
+      "light": "红灯"
+    },
+    {
+      "device_id": "DEV-04",
+      "status": "RUN",
+      "alarms": 100,
+      "over_temp": 0,
+      "n": 297,
+      "tone": "error",
+      "light": "红灯"
+    }
+  ],
+  "alarms_total": 357,
+  "efficiency": {
+    "clip": 1.0,
+    "raw": 1.0046
+  },
+  "anomalies_total": 357,
+  "anomalies_top": [
+    {
+      "ts": "2026-03-03 00:30:00",
+      "device_id": "DEV-02",
+      "temp": 57.2,
+      "vib": 5.999,
+      "status": "RUN",
+      "reasons": "vib",
+      "suggestion": "振动 5.999 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+    },
+    {
+      "ts": "2026-03-20 04:00:00",
+      "device_id": "DEV-01",
+      "temp": 50.36,
+      "vib": 5.999,
+      "status": "RUN",
+      "reasons": "vib",
+      "suggestion": "振动 5.999 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+    },
+    {
+      "ts": "2026-03-11 12:00:00",
+      "device_id": "DEV-01",
+      "temp": 73.51,
+      "vib": 5.998,
+      "status": "RUN",
+      "reasons": "vib",
+      "suggestion": "振动 5.998 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+    },
+    {
+      "ts": "2026-03-08 22:00:00",
+      "device_id": "DEV-01",
+      "temp": 61.04,
+      "vib": 5.979,
+      "status": "RUN",
+      "reasons": "vib",
+      "suggestion": "振动 5.979 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+    },
+    {
+      "ts": "2026-03-24 20:30:00",
+      "device_id": "DEV-02",
+      "temp": 84.29,
+      "vib": 5.977,
+      "status": "RUN",
+      "reasons": "vib",
+      "suggestion": "振动 5.977 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+    }
+  ],
+  "drill": [
+    {
+      "device_id": "DEV-01",
+      "n": 296,
+      "output": 14939,
+      "ok_qty": 13772,
+      "yield_pct": 92.19,
+      "mean_temp": 64.61,
+      "max_vib": 5.999,
+      "alarms": 100,
+      "top_anomalies": [
+        {
+          "ts": "2026-03-20 04:00:00",
+          "device_id": "DEV-01",
+          "temp": 50.36,
+          "vib": 5.999,
+          "status": "RUN",
+          "reasons": "vib",
+          "suggestion": "振动 5.999 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+        },
+        {
+          "ts": "2026-03-11 12:00:00",
+          "device_id": "DEV-01",
+          "temp": 73.51,
+          "vib": 5.998,
+          "status": "RUN",
+          "reasons": "vib",
+          "suggestion": "振动 5.998 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+        },
+        {
+          "ts": "2026-03-08 22:00:00",
+          "device_id": "DEV-01",
+          "temp": 61.04,
+          "vib": 5.979,
+          "status": "RUN",
+          "reasons": "vib",
+          "suggestion": "振动 5.979 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+        },
+        {
+          "ts": "2026-03-02 04:00:00",
+          "device_id": "DEV-01",
+          "temp": 74.9,
+          "vib": 5.95,
+          "status": "RUN",
+          "reasons": "vib",
+          "suggestion": "振动 5.950 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+        },
+        {
+          "ts": "2026-03-03 10:00:00",
+          "device_id": "DEV-01",
+          "temp": 83.2,
+          "vib": 5.904,
+          "status": "RUN",
+          "reasons": "vib",
+          "suggestion": "振动 5.904 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。"
+        }
+      ]
+    }
+  ],
+  "schedule": {
+    "at": "07:30",
+    "mailto": "mailto:line-lead%40example.com?subject=每日生产分析报告%202026-03-01~2026-03-25&body=总产量%3D60,273%0A平均良率%3D92.40%25%0A设备在线数%3D4/4%0A今日告警数%3D357%0A效率对标%3D100.5%25%0AOEE均值%3D83.27%25%0A计划达成率%3D95.52%25%0A平均温度%3D64.85%20℃%0A最高振动%3D5.999%20mm/s",
+    "crontab": "30 7 * * * cd /Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit && /opt/anaconda3/envs/pp03/bin/python run.py --schedule-fire --schedule-at 07:30 --config /Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit/config/rules.yaml >> output/schedule.log 2>&1",
+    "systemd_timer": "[Unit]\nDescription=p33_kpi_cockpit 自动日报（P3 超优(A) 层）\n\n[Timer]\nOnCalendar=*-*-* 07:30:00\nPersistent=true\n\n[Install]\nWantedBy=timers.target",
+    "launchd": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>Label</key><string>com.p33.kpi-daily-report</string>\n  <key>WorkingDirectory</key><string>/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit</string>\n  <key>ProgramArguments</key><array>\n    <string>/opt/anaconda3/envs/pp03/bin/python</string>\n    <string>run.py</string>\n    <string>--schedule-fire</string>\n    <string>--schedule-at</string>\n    <string>07:30</string>\n    <string>--quiet</string>\n  </array>\n  <key>StartCalendarInterval</key><dict>\n    <key>Hour</key><integer>7</integer>\n    <key>Minute</key><integer>30</integer>\n  </dict>\n  <key>StandardOutPath</key><string>runtime/launchd.log</string>\n  <key>StandardErrorPath</key><string>runtime/launchd.log</string>\n</dict>\n</plist>\n",
+    "mobile_adapt": {
+      "viewport": true,
+      "responsive_cards": true,
+      "media_query": true
+    },
+    "artifacts_written_to": "runtime/schedule/（output/ 之外）",
+    "wait_reported_in": "timing.txt"
+  },
+  "schedule_check": {
+    "at": "07:30",
+    "hour": 7,
+    "minute": 30,
+    "next_fire_is_real_datetime": true,
+    "crontab_matches_at": true,
+    "systemd_matches_at": true,
+    "launchd_matches_at": true,
+    "mailto_rendered_ok": true,
+    "artifacts_renders": 4,
+    "wall_clock_values_in": "runtime/schedule_state.txt + output/timing.txt",
+    "all_ok": true
+  },
+  "mobile_check": {
+    "viewport": true,
+    "responsive_cards": true,
+    "media_query": true,
+    "narrow_px": 600,
+    "max_narrow_px": 768,
+    "ok": true
+  },
+  "pdf_check": {
+    "file": "daily_report.pdf",
+    "attempted": true,
+    "exists": true,
+    "bytes": 42190,
+    "pages": 4,
+    "min_bytes": 1500,
+    "ok": true,
+    "note": "校验通过：42190 B / 4 页，%PDF- 头与 %%EOF 尾齐"
+  },
+  "artifacts": {
+    "html": "daily_report.html",
+    "renderer": "Jinja2 3.1.6（StrictUndefined+autoescape）",
+    "pdf": "reportlab PDF（中文字体 内置 CID STSong-Light；仓库 OTF 为 CFF 轮廓，reportlab TTFont 不支持故未采用）",
+    "chart": "matplotlib PNG（已出图）"
+  },
+  "deps": {
+    "streamlit": {
+      "name": "streamlit",
+      "installed": true,
+      "version": "1.65.0",
+      "mode": "native",
+      "why": "Web 仪表盘（app.py 的运行时；缺失时以 AppTest 之外的 headless 路径自检）"
+    },
+    "plotly": {
+      "name": "plotly",
+      "installed": true,
+      "version": "7.1.0",
+      "mode": "native",
+      "why": "交互图表（app.py 的 px.line / 良率仪表）"
+    },
+    "jinja2": {
+      "name": "jinja2",
+      "installed": true,
+      "version": "3.1.6",
+      "mode": "native",
+      "why": "日报 HTML 模板引擎（缺失时用内置 str 占位渲染）"
+    },
+    "reportlab": {
+      "name": "reportlab",
+      "installed": true,
+      "version": "5.0.1",
+      "mode": "native",
+      "why": "日报 PDF（缺失时只出 HTML，报告如实标注）"
+    },
+    "pandas": {
+      "name": "pandas",
+      "installed": true,
+      "version": "3.0.6",
+      "mode": "native",
+      "why": "clean.csv 装载与附表（缺失时用 csv 标准库逐行装载）"
+    },
+    "yaml": {
+      "name": "yaml",
+      "installed": true,
+      "version": "6.0.3",
+      "mode": "native",
+      "why": "rules.yaml 解析（缺失时用内置 yaml_lite）"
+    }
+  },
+  "timing": {
+    "elapsed_bucket": "<1s",
+    "budget_seconds": 120.0,
+    "within_budget": true,
+    "exact_seconds_in": "timing.txt"
+  },
+  "stamp": false,
+  "ui_rubric": {
+    "items": [
+      {
+        "name": "标题层级",
+        "check": "heading_levels",
+        "weight": 1,
+        "passed": true,
+        "evidence": "h1=1 h2=5（要求 h1≥1 且 h2≥4 段）"
+      },
+      {
+        "name": "单位标注",
+        "check": "unit_labels",
+        "weight": 1,
+        "passed": true,
+        "evidence": "标注齐全 %/℃/mm/s"
+      },
+      {
+        "name": "配色",
+        "check": "tone_colors",
+        "weight": 1,
+        "passed": true,
+        "evidence": "三色 CSS=True 使用=True（红绿灯/告警上色）"
+      },
+      {
+        "name": "图例",
+        "check": "chart_legend",
+        "weight": 1,
+        "passed": true,
+        "evidence": "app.py px.line 轴例 labels=True｜日报趋势 SVG=True"
+      },
+      {
+        "name": "响应式",
+        "check": "responsive_layout",
+        "weight": 1,
+        "passed": true,
+        "evidence": "viewport+flex+media 齐"
+      }
+    ],
+    "score": 5,
+    "max": 5,
+    "threshold": 4,
+    "passed": true
+  },
+  "tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "drill_link": {
+    "selection_points": [
+      {
+        "x": "2026-03-03"
+      },
+      {
+        "x": "2026-03-05"
+      },
+      {
+        "x": "2026-03-07"
+      }
+    ],
+    "buckets": [
+      "2026-03-03",
+      "2026-03-05",
+      "2026-03-07"
+    ],
+    "rows_detail": 30,
+    "cap": 30,
+    "detail_columns": [
+      "ts",
+      "device_id",
+      "line",
+      "output",
+      "ok_qty",
+      "temp",
+      "vib",
+      "status"
+    ],
+    "fingerprint": "e89f637a"
+  },
+  "filter_probe": {
+    "date": "2026-03-01",
+    "rows": 47,
+    "rows_all": 1186,
+    "device": {
+      "device": "DEV-01",
+      "rows": 296,
+      "rows_all": 1186,
+      "output": 14939,
+      "output_all": 60273
+    },
+    "sections_in_html": true
+  },
+  "report_sections": [
+    "生产概览",
+    "详细分析",
+    "异常识别",
+    "数据附表"
+  ],
+  "artifacts_written": [
+    "daily_report.html",
+    "daily_report.pdf",
+    "kpi.json",
+    "appendix.csv",
+    "trend_chart.png"
+  ],
+  "linkage": {
+    "app_py_found": true,
+    "on_select_rerun": 2,
+    "trend_drill_key": true,
+    "alarm_table_key": true,
+    "drill_rows_fn_in_app": true,
+    "shared_filter_fn": true
+  }
 }

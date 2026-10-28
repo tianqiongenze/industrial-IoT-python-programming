@@ -44,4 +44,4 @@ bash verify.sh                             # 五库+服务端到端：ALL PASS �
 
 ## 与课程的衔接
 P2.2特征→train_model；P5仓库→relational；P6模型→predict工具；P4采集→时序入库。
-学生版见 `../../学生代码框架/p77_smart_ops/`（5处TODO-P7按图索骥，教师版即本目录）。
+学生版见 `../../学生代码框架/p77_smart_ops/`（5处工单点位 P7-按图索骥，教师版即本目录）。

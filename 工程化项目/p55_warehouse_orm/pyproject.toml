@@ -4,16 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "p55_warehouse_orm"
-version = "1.0.0"
+version = "2.0.0"
 description = "数据仓库 ORM（03-Python程序设计-项目实战 W07 第13次课）"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["SQLAlchemy>=2.0,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "PyYAML>=6.0"]
-
-[project.scripts]
-p55_warehouse_orm = "warehouse_orm.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

@@ -1,0 +1,13 @@
+{
+  "note": "墙钟实测 fit_ms（单位 ms），禁止进入 output/——verify_local repeat 闸门逐字节比对 output/",
+  "seed": 42,
+  "unit": "ms",
+  "models": {
+    "GBM": 52.24,
+    "LR": 2.12,
+    "RF": 203.49,
+    "RF-tuned(grid)": 5806.46
+  },
+  "total_fit_ms": 6064.31,
+  "explain_topk": 3
+}

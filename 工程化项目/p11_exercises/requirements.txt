@@ -1,8 +1,17 @@
-# Python 五题闯关 —— 依赖清单（精确版本锁定）
-# 生成方式：在本机已校准环境中读取实际安装版本（== 保证课堂结果可复现）
+# P1.1《Python 基础练习五题》依赖清单（课堂环境 pp03 实测版本）
 # 用法：pip install -r requirements.txt
-# 说明：
-#   1. 已安装包用 == 精确锁定；标 `# 待核验` 者本机未安装，请安装后回填版本。
-#   2. pyproject.toml 保留区间声明（库规范），此处用精确版（教学可复现）。
-#   3. 离线环境：pip install --no-index --find-links=./offline_wheels -r requirements.txt
-# 本项目仅依赖 Python 标准库，无需第三方包
+# 口径：
+#   1. 运行本体零强制依赖——只用标准库（math/ast/tokenize/csv/json/tempfile…）。
+#   2. PyYAML 可选：装了走 PyYAML，没装自动降级 config.yaml_lite（报告首节写明用
+#      了哪个解析器），因此课堂离线也能跑。
+#   3. 行尾注释即 `python -c "import x; print(x.__version__)"` 的实测值。
+PyYAML==6.0.2          # 实测已安装；缺失时降级内置 yaml_lite，不致命
+pytest==9.1.1          # 实测已安装；跑 tests/ 的分层用例（退出码 0 为准）
+
+# 工单 P1.2 要求、但本环境实测「未安装」的规范工具（勿删，供课前补装核对）：
+#   python -m pylint --version   -> No module named pylint
+#   python -m flake8 --version   -> No module named flake8
+#   python -m black --version    -> No module named black
+#   python -m pre_commit --version -> No module named pre_commit
+# 装上后无需改代码：stylecheck.probe() 会自动探测到，pylint_score() 输出真实分数；
+# 未装时 output/report.txt 只写「不可用」，绝不编造评分。

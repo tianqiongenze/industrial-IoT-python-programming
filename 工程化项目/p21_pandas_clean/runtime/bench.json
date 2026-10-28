@@ -1,0 +1,8 @@
+{
+  "bench_rows": 1004740,
+  "budget_seconds": 300.0,
+  "quality_score": 100.0,
+  "rows_out": 988422,
+  "seconds": 17.314,
+  "throughput_rows_per_second": 58030
+}

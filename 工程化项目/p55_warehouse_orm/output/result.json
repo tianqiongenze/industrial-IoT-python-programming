@@ -1,9 +1,1016 @@
 {
-  "n_records": 500,
-  "index_col": "device_id",
-  "hits": 50,
-  "plan_indexed": "INDEX SCAN on device_id",
-  "plan_full": "FULL SCAN on sensor_log",
-  "index_ms": 0.0042,
-  "full_ms": 0.6268
+  "env": {
+    "python": "3.12.11",
+    "sqlalchemy": "2.1.3",
+    "db_url": "sqlite:////Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p55_warehouse_orm/output/warehouse.db"
+  },
+  "seed": {
+    "devices": 3,
+    "points": 6,
+    "records": 500,
+    "alarms": 57,
+    "seed": 7,
+    "n_records": 500,
+    "warn": 4.5,
+    "danger": 6.0,
+    "commits": 5,
+    "batch_size": 100
+  },
+  "buffer_import": {
+    "source": "P4缓冲库 buffer.db（468 行）",
+    "buffer_rows": 468,
+    "records_written": 936,
+    "batch_size": 100,
+    "commits": 10
+  },
+  "records_total": 1436,
+  "queries": {
+    "avg_vib": [
+      [
+        "DEV-01",
+        3.8581,
+        174
+      ],
+      [
+        "DEV-02",
+        4.1893,
+        371
+      ],
+      [
+        "DEV-03",
+        3.9144,
+        173
+      ]
+    ],
+    "top_alarms": [
+      [
+        "DEV-02",
+        "SMT车间B",
+        22
+      ],
+      [
+        "DEV-03",
+        "装配车间C",
+        22
+      ],
+      [
+        "DEV-01",
+        "SMT车间A",
+        13
+      ]
+    ],
+    "hourly": [
+      [
+        "2026-04-01 00:00",
+        60
+      ],
+      [
+        "2026-04-01 01:00",
+        60
+      ],
+      [
+        "2026-04-01 02:00",
+        60
+      ],
+      [
+        "2026-04-01 03:00",
+        60
+      ],
+      [
+        "2026-04-01 04:00",
+        60
+      ],
+      [
+        "2026-04-01 05:00",
+        60
+      ],
+      [
+        "2026-04-01 06:00",
+        60
+      ],
+      [
+        "2026-04-01 07:00",
+        60
+      ],
+      [
+        "2026-04-01 08:00",
+        20
+      ],
+      [
+        "2026-10-12 11:00",
+        216
+      ],
+      [
+        "2026-10-27 14:00",
+        600
+      ],
+      [
+        "2026-10-27 19:00",
+        120
+      ]
+    ],
+    "window_orm": [
+      [
+        "2026-04-01 00:00",
+        60,
+        null,
+        null
+      ],
+      [
+        "2026-04-01 01:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 02:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 03:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 04:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 05:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 06:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 07:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 08:00",
+        20,
+        60,
+        -0.6667
+      ],
+      [
+        "2026-10-12 11:00",
+        216,
+        20,
+        9.8
+      ],
+      [
+        "2026-10-27 14:00",
+        600,
+        216,
+        1.7778
+      ],
+      [
+        "2026-10-27 19:00",
+        120,
+        600,
+        -0.8
+      ]
+    ],
+    "window_raw": [
+      [
+        "2026-04-01 00:00",
+        60,
+        null,
+        null
+      ],
+      [
+        "2026-04-01 01:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 02:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 03:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 04:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 05:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 06:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 07:00",
+        60,
+        60,
+        0.0
+      ],
+      [
+        "2026-04-01 08:00",
+        20,
+        60,
+        -0.6667
+      ],
+      [
+        "2026-10-12 11:00",
+        216,
+        20,
+        9.8
+      ],
+      [
+        "2026-10-27 14:00",
+        600,
+        216,
+        1.7778
+      ],
+      [
+        "2026-10-27 19:00",
+        120,
+        600,
+        -0.8
+      ]
+    ]
+  },
+  "data_dictionary": [
+    {
+      "table": "devices",
+      "column": "id",
+      "type": "INTEGER",
+      "pk": "PK",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "设备主键"
+    },
+    {
+      "table": "devices",
+      "column": "code",
+      "type": "VARCHAR(16)",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "设备编号（唯一，如 DEV-01）"
+    },
+    {
+      "table": "devices",
+      "column": "name",
+      "type": "VARCHAR(64)",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "设备名称"
+    },
+    {
+      "table": "devices",
+      "column": "area",
+      "type": "VARCHAR(32)",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "车间：设备归属产线车间"
+    },
+    {
+      "table": "points",
+      "column": "id",
+      "type": "INTEGER",
+      "pk": "PK",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "测点主键"
+    },
+    {
+      "table": "points",
+      "column": "device_id",
+      "type": "INTEGER",
+      "pk": "",
+      "fk": "devices.id",
+      "nullable": "NOT NULL",
+      "meaning": "外键→devices.id（设备1-N测点）"
+    },
+    {
+      "table": "points",
+      "column": "metric",
+      "type": "VARCHAR(16)",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "测点类型：temp=温度 / vib=振动"
+    },
+    {
+      "table": "points",
+      "column": "unit",
+      "type": "VARCHAR(8)",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "工程单位（℃ / mm·s⁻¹）"
+    },
+    {
+      "table": "records",
+      "column": "id",
+      "type": "INTEGER",
+      "pk": "PK",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "记录主键"
+    },
+    {
+      "table": "records",
+      "column": "point_id",
+      "type": "INTEGER",
+      "pk": "",
+      "fk": "points.id",
+      "nullable": "NOT NULL",
+      "meaning": "外键→points.id（联合索引最左列）"
+    },
+    {
+      "table": "records",
+      "column": "ts",
+      "type": "DATETIME",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "采集时刻（UTC，DateTime 列，不存字符串）"
+    },
+    {
+      "table": "records",
+      "column": "value",
+      "type": "FLOAT",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "测点读数"
+    },
+    {
+      "table": "alarms",
+      "column": "id",
+      "type": "INTEGER",
+      "pk": "PK",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "告警主键"
+    },
+    {
+      "table": "alarms",
+      "column": "device_id",
+      "type": "INTEGER",
+      "pk": "",
+      "fk": "devices.id",
+      "nullable": "NOT NULL",
+      "meaning": "外键→devices.id（告警挂设备）"
+    },
+    {
+      "table": "alarms",
+      "column": "ts",
+      "type": "DATETIME",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "告警发生时刻"
+    },
+    {
+      "table": "alarms",
+      "column": "level",
+      "type": "INTEGER",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "级别：1=超预警线 2=超危险线"
+    },
+    {
+      "table": "alarms",
+      "column": "message",
+      "type": "VARCHAR(128)",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "告警描述"
+    },
+    {
+      "table": "alarms",
+      "column": "resolved",
+      "type": "BOOLEAN",
+      "pk": "",
+      "fk": "",
+      "nullable": "NOT NULL",
+      "meaning": "是否已消警"
+    }
+  ],
+  "complex_summary": [
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 00:00",
+      20,
+      65.86,
+      3.431,
+      1,
+      1
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 00:00",
+      20,
+      60.925,
+      3.061,
+      0,
+      null
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 00:00",
+      20,
+      60.787,
+      3.839,
+      2,
+      1
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 01:00",
+      20,
+      58.883,
+      3.304,
+      2,
+      1
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 01:00",
+      20,
+      60.652,
+      3.941,
+      5,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 01:00",
+      20,
+      63.973,
+      3.684,
+      3,
+      1
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 02:00",
+      20,
+      63.566,
+      3.522,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 02:00",
+      20,
+      63.952,
+      3.783,
+      3,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 02:00",
+      20,
+      57.986,
+      4.158,
+      5,
+      2
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 03:00",
+      20,
+      65.155,
+      4.442,
+      5,
+      2
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 03:00",
+      20,
+      58.961,
+      3.802,
+      3,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 03:00",
+      20,
+      64.579,
+      3.348,
+      3,
+      1
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 04:00",
+      20,
+      61.958,
+      2.691,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 04:00",
+      20,
+      60.527,
+      3.719,
+      2,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 04:00",
+      20,
+      62.782,
+      3.328,
+      3,
+      1
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 05:00",
+      20,
+      61.79,
+      3.859,
+      3,
+      2
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 05:00",
+      20,
+      67.037,
+      4.296,
+      5,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 05:00",
+      20,
+      60.443,
+      3.572,
+      2,
+      2
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 06:00",
+      20,
+      66.412,
+      3.374,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 06:00",
+      20,
+      62.217,
+      3.925,
+      2,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 06:00",
+      20,
+      63.628,
+      3.533,
+      2,
+      1
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 07:00",
+      20,
+      55.493,
+      3.69,
+      2,
+      1
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 07:00",
+      20,
+      61.497,
+      3.263,
+      2,
+      1
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 07:00",
+      20,
+      62.526,
+      3.658,
+      2,
+      1
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-04-01 08:00",
+      7,
+      49.043,
+      3.217,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-04-01 08:00",
+      7,
+      61.657,
+      3.397,
+      0,
+      null
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-04-01 08:00",
+      6,
+      62.207,
+      3.566,
+      0,
+      null
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-10-12 11:00",
+      72,
+      52.933,
+      4.192,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-10-12 11:00",
+      72,
+      69.186,
+      5.281,
+      0,
+      null
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-10-12 11:00",
+      72,
+      66.264,
+      4.003,
+      0,
+      null
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-10-27 14:00",
+      90,
+      53.987,
+      4.162,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-10-27 14:00",
+      420,
+      63.616,
+      4.163,
+      0,
+      null
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-10-27 14:00",
+      90,
+      66.88,
+      4.282,
+      0,
+      null
+    ],
+    [
+      "DEV-01",
+      "SMT车间A",
+      "2026-10-27 19:00",
+      18,
+      53.933,
+      4.122,
+      0,
+      null
+    ],
+    [
+      "DEV-02",
+      "SMT车间B",
+      "2026-10-27 19:00",
+      84,
+      59.981,
+      4.329,
+      0,
+      null
+    ],
+    [
+      "DEV-03",
+      "装配车间C",
+      "2026-10-27 19:00",
+      18,
+      66.867,
+      4.278,
+      0,
+      null
+    ]
+  ],
+  "trace_samples": [
+    [
+      "1",
+      "DEV-01",
+      "2026-04-01 00:06:00",
+      "1",
+      "4.879"
+    ],
+    [
+      "2",
+      "DEV-03",
+      "2026-04-01 00:08:00",
+      "1",
+      "4.792"
+    ],
+    [
+      "3",
+      "DEV-03",
+      "2026-04-01 00:56:00",
+      "1",
+      "5.257"
+    ]
+  ],
+  "n_plus_one": {
+    "lazy_sql_count": 4,
+    "joinedload_sql_count": 1,
+    "selectinload_sql_count": 2,
+    "devices": 3,
+    "loader": "joinedload",
+    "eager_sql_count": 1,
+    "mitigated": true
+  },
+  "fk_orphan_rejected": true,
+  "bench": {
+    "index_bench": {
+      "bench_rows": 20000,
+      "reps": 7,
+      "hits": 240,
+      "before_plan": [
+        "SCAN bench_records"
+      ],
+      "after_plan": [
+        "SEARCH bench_records USING COVERING INDEX idx_bench_dev_ts (point_id=? AND ts>? AND ts<?)"
+      ],
+      "scan_before": true,
+      "index_search_after": true,
+      "production_index": "records 表 idx_dev_ts(point_id, ts) 由 ORM __table_args__ 声明；基准在等结构副本表 bench_records 上做大样本实测以免污染业务表"
+    },
+    "slow_queries": [
+      {
+        "name": "全表聚合：按小时统计记录数",
+        "plan": [
+          "SCAN records USING COVERING INDEX idx_dev_ts",
+          "USE TEMP B-TREE FOR GROUP BY"
+        ]
+      },
+      {
+        "name": "三表JOIN：各设备平均vib",
+        "plan": [
+          "SCAN p",
+          "SEARCH d USING INTEGER PRIMARY KEY (rowid=?)",
+          "SEARCH r USING INDEX idx_dev_ts (point_id=?)",
+          "USE TEMP B-TREE FOR GROUP BY"
+        ]
+      },
+      {
+        "name": "无最左前缀：仅按 ts 范围查（idx_dev_ts 不生效→教学案例）",
+        "plan": [
+          "SCAN records USING COVERING INDEX idx_dev_ts"
+        ]
+      }
+    ],
+    "timings_in": "runtime/bench.json",
+    "params": {
+      "rows": 20000,
+      "reps": 7,
+      "seed": 7,
+      "topk": 3
+    },
+    "source": "首次运行/--index-bench/参数变更后实测；其余运行读此缓存"
+  },
+  "handoff": {
+    "rows": 36,
+    "columns": [
+      "ts",
+      "device_id",
+      "line",
+      "temp",
+      "vib",
+      "status"
+    ],
+    "devices": 3,
+    "hours": 12,
+    "status_counts": {
+      "DOWN": 4,
+      "RUN": 16,
+      "WARN": 16
+    },
+    "empty_cells": 0,
+    "exists": true,
+    "missing_columns": [],
+    "ts_parse_failures": 0,
+    "unknown_devices": [],
+    "path": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p55_warehouse_orm/output/p3_dashboard_handoff.csv",
+    "rel_path": "output/p3_dashboard_handoff.csv",
+    "disabled": false
+  },
+  "evidence": {
+    "tables_required": 4,
+    "tables_created": 4,
+    "tables_missing": [],
+    "seed_records": 500,
+    "buffer_written": 936,
+    "orm_rows_expected": 1436,
+    "orm_rows_loaded": 1436,
+    "stat_query_rows": {
+      "T4a": 3,
+      "T4b": 3,
+      "T4c": 12
+    },
+    "stat_queries_available": 3,
+    "stat_queries_total": 3,
+    "min_stat_queries": 2,
+    "dict_columns_total": 18,
+    "dict_columns_documented": 18,
+    "dict_columns_commented": 8,
+    "dict_undocumented": [],
+    "batch_size": 100,
+    "seed_commits": 5,
+    "import_commits": 10,
+    "commits_total": 15,
+    "bulk_objects": true,
+    "alarms_total": 57,
+    "alarms_traced": 57,
+    "trace_join_tables": 4,
+    "trace_orphans": 0,
+    "trace_orphan_detail": {
+      "records.point_id": 0,
+      "points.device_id": 0,
+      "alarms.device_id": 0
+    },
+    "n_plus_one": {
+      "lazy_sql_count": 4,
+      "joinedload_sql_count": 1,
+      "selectinload_sql_count": 2,
+      "devices": 3,
+      "loader": "joinedload",
+      "eager_sql_count": 1,
+      "mitigated": true
+    },
+    "index_bench": {
+      "bench_rows": 20000,
+      "reps": 7,
+      "hits": 240,
+      "before_plan": [
+        "SCAN bench_records"
+      ],
+      "after_plan": [
+        "SEARCH bench_records USING COVERING INDEX idx_bench_dev_ts (point_id=? AND ts>? AND ts<?)"
+      ],
+      "scan_before": true,
+      "index_search_after": true,
+      "production_index": "records 表 idx_dev_ts(point_id, ts) 由 ORM __table_args__ 声明；基准在等结构副本表 bench_records 上做大样本实测以免污染业务表"
+    },
+    "bench_timings_in": "runtime/bench.json",
+    "window_buckets": 12,
+    "orm_raw_window_equal": true,
+    "summary_buckets": 36,
+    "summary_devices": 3,
+    "summary_matches_manual": true,
+    "handoff": {
+      "rows": 36,
+      "columns": [
+        "ts",
+        "device_id",
+        "line",
+        "temp",
+        "vib",
+        "status"
+      ],
+      "devices": 3,
+      "hours": 12,
+      "status_counts": {
+        "DOWN": 4,
+        "RUN": 16,
+        "WARN": 16
+      },
+      "empty_cells": 0,
+      "exists": true,
+      "missing_columns": [],
+      "ts_parse_failures": 0,
+      "unknown_devices": [],
+      "path": "/Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p55_warehouse_orm/output/p3_dashboard_handoff.csv",
+      "rel_path": "output/p3_dashboard_handoff.csv",
+      "disabled": false
+    },
+    "fk_orphan_rejected": true
+  },
+  "tier_criteria": {
+    "D": {
+      "four_tables": true,
+      "orm_insert_ok": true,
+      "stat_queries": true
+    },
+    "C": {
+      "dictionary_complete": true,
+      "bulk_transactions": true,
+      "traceability": true
+    },
+    "B": {
+      "explain_evidence": true,
+      "n_plus_one_avoided": true
+    },
+    "A": {
+      "complex_join_aggregate": true,
+      "p3_handoff": true
+    }
+  },
+  "tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "runtime_files": {
+    "bench": "runtime/bench.json",
+    "bench_db": "runtime/bench.db",
+    "note": "墙钟毫秒（索引前后耗时/提速倍数/慢查询中位耗时）只存 runtime/，output/ 内任何产物都不含实测时间值"
+  }
 }

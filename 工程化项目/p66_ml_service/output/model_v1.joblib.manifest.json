@@ -1,0 +1,63 @@
+{
+  "model_name": "model_v1.joblib",
+  "version_note": "model_v1.joblib：P6 五步流训练产物（划分→训练→CV→GridSearch→落盘）",
+  "estimator": "LR",
+  "sklearn": "1.9.1",
+  "numpy": "2.5.4",
+  "python": "3.12.11",
+  "trained_at_utc": "2026-10-27T21:10:58",
+  "data_source": "真实数据：P2.2 产物 features.npy（200×30）",
+  "n_features": 30,
+  "feature_names": [
+    "mean",
+    "std",
+    "max",
+    "ptp",
+    "rms",
+    "var",
+    "abs_mean",
+    "crest",
+    "kurtosis",
+    "clearance",
+    "skewness",
+    "cv",
+    "shape_factor",
+    "impulse_factor",
+    "zero_crossing_rate",
+    "dom_freq",
+    "f2",
+    "f3",
+    "spec_energy",
+    "spec_centroid",
+    "spec_var",
+    "bandwidth",
+    "half_power_bw",
+    "energy_ratio_0_20hz",
+    "spec_rolloff",
+    "rms_freq",
+    "spectral_flatness",
+    "spectral_skewness",
+    "spectral_kurtosis",
+    "entropy"
+  ],
+  "seed": 42,
+  "metrics": {
+    "test_macro_f1": 1.0,
+    "confusion_matrix": [
+      [
+        25,
+        0
+      ],
+      [
+        0,
+        25
+      ]
+    ],
+    "grid_best_params": {
+      "max_depth": "4",
+      "n_estimators": "50"
+    }
+  },
+  "gate_min_f1": 0.8,
+  "gate_passed": true
+}

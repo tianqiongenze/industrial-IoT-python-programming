@@ -7,6 +7,7 @@
   3. 失败时抛带文件名的异常，便于排错（对应 GB/T 15532 异常路径测试）。
 """
 import csv
+import hashlib
 import json
 import os
 import tempfile
@@ -32,19 +33,35 @@ def write_text(path, text, encoding="utf-8"):
     return path
 
 
-def write_json(path, obj):
-    return write_text(path, json.dumps(obj, ensure_ascii=False, indent=2))
+def write_json(path, obj, default=None):
+    return write_text(path, json.dumps(obj, ensure_ascii=False, indent=2,
+                                       sort_keys=True, default=default))
 
 
-def read_json(path):
+def read_json(path, default=None):
+    if not os.path.exists(path):
+        return default
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
 def read_csv_rows(path):
-    """按行读 CSV，返回 list[dict]；首行视为表头。"""
+    """按行读 CSV，返回 list[dict]；首行视为表头。
+
+    管道第 0 步用它核对"物理行数/表头列名"，与 pandas 解析出的逻辑行数对账——
+    两者不一致即说明存在换行/引号/编码类脏格式，摸底阶段必须先看见。
+    """
     with open(path, encoding="utf-8-sig", newline="") as f:
         return [dict(r) for r in csv.DictReader(f)]
+
+
+def sha256_short(path, length=12):
+    """输入文件指纹（确定性，替代报告里的"生成时间戳"以保证逐字节可复现）。"""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()[:length]
 
 
 def write_csv_rows(path, rows, fields=None):
@@ -69,3 +86,4 @@ def fmt_table(rows, headers):
     for r in cols[1:]:
         out.append("  ".join(c.ljust(widths[i]) for i, c in enumerate(r)))
     return "\n".join(out)
+

@@ -1,8 +1,134 @@
 {
-  "rows_before": 200,
-  "rows_after": 182,
-  "removed": 18,
-  "quality": 1.0,
-  "target": 0.85,
-  "gate_passed": true
+  "clean_rate": 0.016584,
+  "config": {
+    "custom_rules": [
+      "temp >= 30 and temp <= 110",
+      "press >= 0.2 and press <= 0.9",
+      "status != 'OFF'"
+    ],
+    "danger": 95.0,
+    "iqr_k": 1.5,
+    "outlier_action": "remove",
+    "press_range": [
+      0.1,
+      1.0
+    ],
+    "seed": 7,
+    "temp_range": [
+      20.0,
+      120.0
+    ],
+    "topk": 3,
+    "unit": "c",
+    "warn": 80.0
+  },
+  "duplicate_rate": 0.0,
+  "input": {
+    "bytes": 44564,
+    "na_literal_rows": 55,
+    "path": "../../p21_raw.csv",
+    "physical_rows": 1206,
+    "sha256": "5f7d6d5ccacc"
+  },
+  "quality_score": 100.0,
+  "removed": 20,
+  "rows_in": 1206,
+  "rows_out": 1186,
+  "score_parts": {
+    "accuracy": 30.0,
+    "completeness": 40.0,
+    "consistency": 20.0,
+    "timeliness": 10.0
+  },
+  "step_ledger": [
+    {
+      "removed": 0,
+      "rows_in": 1206,
+      "rows_out": 1206,
+      "step": "TODO-1 摸底"
+    },
+    {
+      "removed": 0,
+      "rows_in": 1206,
+      "rows_out": 1206,
+      "step": "TODO-3 类型转换"
+    },
+    {
+      "removed": 0,
+      "rows_in": 1206,
+      "rows_out": 1206,
+      "step": "TODO-2 缺失处理"
+    },
+    {
+      "removed": 14,
+      "rows_in": 1206,
+      "rows_out": 1192,
+      "step": "TODO-4 异常检测"
+    },
+    {
+      "removed": 6,
+      "rows_in": 1192,
+      "rows_out": 1186,
+      "step": "TODO-5 去重"
+    },
+    {
+      "removed": 0,
+      "rows_in": 1186,
+      "rows_out": 1186,
+      "step": "自定义规则(A层)"
+    },
+    {
+      "removed": 0,
+      "rows_in": 1186,
+      "rows_out": 1186,
+      "step": "工艺红线旗标"
+    },
+    {
+      "removed": 0,
+      "rows_in": 1186,
+      "rows_out": 1186,
+      "step": "TODO-6 校验"
+    }
+  ],
+  "tiers": {
+    "bench_measured": true,
+    "bench_pass": true,
+    "custom_rules_active": true,
+    "custom_rules_count": 3,
+    "custom_rules_removed": 0,
+    "excellent": 90.0,
+    "good": 88.0,
+    "incremental_matches_full": true,
+    "incremental_new_rows": 0,
+    "log_repro_steps": 8,
+    "log_reproducible": true,
+    "pep8_checks": [
+      2586,
+      2695
+    ],
+    "pep8_min_B": 85.0,
+    "pep8_min_D": 75.0,
+    "pep8_pass_B": true,
+    "pep8_pass_D": true,
+    "pep8_score": 96.0,
+    "pipeline_complete": true,
+    "pipeline_steps": 8,
+    "score": 100.0,
+    "target": 85.0,
+    "tier_A_super": true,
+    "tier_B_excellent": true,
+    "tier_C_good": true,
+    "tier_D_pass": true,
+    "uniqueness_pass": true,
+    "usage_example": true,
+    "usage_example_ref": "README.md:83"
+  },
+  "validation": {
+    "device_id 匹配 DEV-\\d{2}": true,
+    "press∈[0.1,1.0]": true,
+    "temp∈[20.0,120.0]": true,
+    "ts 为 datetime 型": true,
+    "设备内时间严格递增": true,
+    "重复率≤0.0": true
+  }
 }

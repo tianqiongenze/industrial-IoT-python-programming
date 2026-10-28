@@ -1,0 +1,6 @@
+# B 层：开发依赖可还原（一行 pip 装齐；运行依赖用 -r 引用，不重复真源）
+-r requirements.txt
+pytest>=8.0
+black>=23.0
+flake8>=6.0
+pre-commit>=3.0

@@ -1,13 +1,96 @@
+# P1.1《Python 基础练习五题》唯一规则外置点：改配置不改代码
+# 每个键都有消费方（见 docs/05 的"配置键 → 代码位置"表）；
+# 出现未识别的顶层键时，load_config 会在报告里登记为"死配置"告警。
+
+# 全局阈值与取数口径（题1 温度定级、题3 topk 清单、A 层讲解抽签）
 warn: 80.0
 danger: 95.0
-unit: "c"
-seed: 7
-topk: 3
+topk: 2
 
+# PEP 8 达标线（内置 stylecheck 子集实测，非 pylint 评分），锚定工单分层表：
+#   pep8_pass_rate_d = 及格(D) 行"PEP 8≥75%"线：达标率 ≥75% 才算及格
+#   pep8_pass_rate_b = 优秀(B) 行"PEP 8≥85%"线：达标率 ≥85% 才算优秀
+# 改这两个键即可移动带宽（改配置不改代码），validate 保证 D 线 ≤ B 线。
+pep8_pass_rate_d: 75.0
+pep8_pass_rate_b: 85.0
+
+# 工单各档"正确题数"线（及格≥3 题 / 良好 4 题且必须含第 4 题 / 优秀 5 题）。
+# 允许把线抬到 >5 做"闸门可证伪"演示：题数不够时该档即判未达标。
+d_min_correct: 3
+c_min_correct: 4
+b_min_correct: 5
+
+# 良好(C)「命名有意义」达标率线（%，stylecheck 公开函数/方法命名实测）；
+# 超优(A)「每题附测试用例」的每题最少 pytest 用例条数（tests/ 实测计数）。
+naming_meaningful_rate: 90.0
+tests_per_question_min: 1
+
+# 题1 温度单位换算器：℃ → ℉ + K（两个结果都必须返回）
+temperature:
+  unit: "c"
+  absolute_zero_c: -273.15
+  tolerance: 0.000001
+  samples: [0.0, 36.6, 100.0, -273.15, 85.0]
+
+# 题2 一元二次方程：cases=常规三分支用例，extreme=极值系数用例
+quadratic:
+  cases:
+    - a: 1
+      b: -3
+      c: 2
+    - a: 1
+      b: 2
+      c: 1
+    - a: 1
+      b: 0
+      c: 1
+    - a: 2
+      b: -8
+      c: 3
+  extreme:
+    a: 1
+    b: -1000000
+    c: 1
+
+# 题3 设备清单管理（字典 CRUD）
+# 注意：YAML 的 01 会被 PyYAML 解析成整数 1，故 id_width 决定归一化口径
 devices:
-  - id: 01
-    name: 注塑机A
-  - id: 02
-    name: 冷却泵B
-  - id: 03
-    name: 空压机C
+  id_width: 2
+  default_status: "停止"
+  update_id: 03
+  update_status: "运行"
+  remove_id: 02
+  list:
+    - id: 01
+      name: 注塑机A
+      status: 运行
+    - id: 02
+      name: 冷却泵B
+      status: 停止
+    - id: 03
+      name: 空压机C
+      status: 停止
+
+# 题4 Device 基类 + PLC 子类（scan_ms / scan() / 覆盖 start()）
+plc:
+  dev_id: 02
+  name: S7-1200
+  scan_ms: 8
+  scan_rounds: 3
+  scan_ms_max: 10000
+  scan_warn_ms: 500
+  scan_danger_ms: 1000
+
+# 题5 异常保护文件读取：样例文件名与坏编码字节
+reader:
+  sample_name: "sample_utf8.txt"
+  bad_encoding_name: "bad_encoding.bin"
+  missing_name: "no_such_file.txt"
+  sample_text: "设备清单表头：id,name,status"
+  bad_bytes: [255, 254, 65, 66]
+
+# 元信息：工单号 / 讲解抽签种子 / 默认验收层
+meta:
+  work_order: "P1.1"
+  seed: 7
+  tier: "A"

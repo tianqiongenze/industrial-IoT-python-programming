@@ -1,9 +1,122 @@
-warn: 80.0
-danger: 95.0
-unit: "c"
-seed: 7
-topk: 5
+# ============================================================================
+# P3《产线KPI仪表盘与自动日报》—— 唯一配置源（GB/T 8566 支持过程·配置管理）
+# 原则：改配置不改代码。下面每一个键都被 src/app 中某处真实读取（无死键；
+#       增删改键须同步 docs/05 参数表与引用它的测试，如 drill.max_rows ↔
+#       tests/test_tier_gates.py::test_config_only_flip_drill_cap_fails_c_and_b、
+#       report.pdf_enabled ↔ ::test_config_only_flip_pdf_disabled_fails_d、
+#       report.ui_rubric.items[].weight ↔ ::test_config_only_flip_rubric_weights_fails_b）。
+# 档位口径 = 工单任务书 P3 验收标准（及格D/良好C/优秀B/超优A），闸门可证伪：
+#       下列 pdf_enabled / pdf_min_bytes / ui_rubric / drill.max_rows /
+#       mobile.max_narrow_px / schedule.mailto 任一改坏，对应档位当场判未达标。
+# ============================================================================
+project: p33_kpi_cockpit
+work_order: P3
+warn: 80.0                  # 良率黄线（%）：低于 danger 且 ≥ warn → 黄灯；低于此 → 红灯
+danger: 95.0                # 良率绿线（%）＝良率目标：达到即绿灯（warn<danger 由 config 校验）
+unit: c                     # 温度单位口径（c→℃/f→℉/k→K，见 config.unit_symbol）
+seed: 2026                  # 合成数据随机种子（TODO-0 兜底路径，写入报告）
+topk: 5                     # 异常明细/钻取榜单取前 k 条
 
+# ---- 1. KPI 口径（core.compute_kpis 逐条消费；required 即工单点名的 5 个 KPI）----
+kpi:
+  required:
+    - 总产量
+    - 平均良率
+    - 设备在线数
+    - 今日告警数
+    - 效率对标
+  extra:                    # 工单"≥7 指标"＝required(5) + extra(4) = 9（优秀(B) 佐证之一）
+    - OEE均值
+    - 计划达成率
+    - 平均温度
+    - 最高振动
+
+# ---- 2. 阈值（异常识别 temp>90 / 告警 vib>4.5 全部由此驱动）----
+thresholds:
+  temp_max: 90.0            # 超过 → 异常识别命中（工单 P3.2-3）
+  vib_max: 4.5              # 超过 → 今日告警 +1（TODO-2 c4 / TODO-4 告警表）
+  status_online: RUN        # 在线判定值（设备在线数 KPI）
+
+# ---- 3. 目标值（TODO-5 效率对标进度条 = 实际/目标）----
+targets:
+  output_qty_per_day: 2400  # 单日产量目标：效率对标分母 = 该值 × 窗口天数
+  report_seconds_max: 120   # 工单 P3.2 时限：日报生成 < 2 分钟（pipeline 实测断言）
+
+# ---- 4. TODO-0 数据源：优先吃 P2.1 的 clean.csv，缺失才按 seed 合成 ----
+data:
+  candidates:               # 按序探测，第一个存在且可读的即选中，来源写入报告
+    - ../p21_pandas_clean/output/clean.csv
+    - ../../clean.csv
+    - ../../学生代码框架/clean.csv
+    - data/clean.csv
+  prefer: clean.csv         # 期望文件名（缺失时提示语用）
+  require_columns: [ts]     # 最低可用列；其余列按 provenance 标注真实/派生
+  synth:                    # 兜底合成（与 starter W05_dashboard.py 同参数）
+    rows: 2000
+    start: 2026-04-01
+    freq: 30min
+    devices: [DEV-01, DEV-02, DEV-03, DEV-04]
+    temp_low: 45.0
+    temp_high: 95.0
+    vib_low: 1.0
+    vib_high: 6.0
+    yield_low: 0.88
+    yield_high: 0.99
+    output_lambda: 50       # 泊松强度
+
+# ---- 5. 日报（四段式：概览/分析/异常/附表；模板与数据分离）----
+report:
+  title: 每日生产分析报告
+  template: templates/daily_report.html.j2
+  sections: [生产概览, 详细分析, 异常识别, 数据附表]
+  html_name: daily_report.html
+  pdf_name: daily_report.pdf
+  pdf_enabled: true         # 及格(D)"PDF正确"：默认真生成并校验；改 false → D 档当场未达标
+  pdf_min_bytes: 1500       # 及格(D) PDF 非平凡下限（字节）；pdf_check 实测 bytes/页头页尾页数
+  tail_rows: 50             # 附表层数（TODO 附表 df.tail(50)）
+  analysis_top: 8           # 详细分析：设备对比表最多几行
+  fonts:                    # reportlab 中文字体候选（依次尝试，失败降级 CID）
+    - ../../../fonts/SourceHanSansCN-Regular.ttf
+    - /System/Library/Fonts/PingFang.ttc
+  cid_font: STSong-Light    # 兜底：reportlab 内置 CID 中文字体（无需字体文件）
+  mobile:                   # 超优(A)"移动端适配"：对生成 HTML 实测窄屏断点，不看口号
+    max_narrow_px: 768      # 模板 @media max-width 允许的最窄断点上限（px）；改 0 → A 档当场未达标
+  ui_rubric:                # 优秀(B)"美观度≥4/5"：确定性检查清单（每项由 report.ui_rubric 的
+                            #   同名 check 函数对真实产物 HTML/app.py 源码实测，零主观自评；
+                            #   全部 weight 改 0 → B 档当场未达标）
+    threshold: 4            # 得分线：score ≥ threshold 才计入 B 档
+    items:
+      - name: 标题层级
+        check: heading_levels
+        weight: 1
+      - name: 单位标注
+        check: unit_labels
+        weight: 1
+      - name: 配色
+        check: tone_colors
+        weight: 1
+      - name: 图例
+        check: chart_legend
+        weight: 1
+      - name: 响应式
+        check: responsive_layout
+        weight: 1
+
+# ---- 6. 超优(A)：定时 + 邮件 + 计划任务产物 ----
+schedule:
+  at: "07:30"               # 每日生成时刻（解析为真实下次触发 datetime；墙钟值只写 runtime/）
+  mailto: line-lead@example.com   # mailto 渲染收件人（改空串 → A 档 mailto_ok=false）
+  max_wait_seconds: 5       # --schedule 演示模式最多等这么久（离线可验证）
+drill:
+  default_device: DEV-01    # --drill 未给设备时的默认值
+  max_rows: 30              # 联动明细最多渲染行数（0 = 关掉钻取面板 → 良好(C)/优秀(B)/超优(A) 当场判未达标）
+  detail_columns: [ts, device_id, line, output, ok_qty, temp, vib, status]  # 联动明细列
+
+# ---- 7. 工程化要求：cache TTL（数据新鲜度）----
+cache:
+  ttl_seconds: 300          # @st.cache_data(ttl=...) 用（工程化要求 2）
+
+# ---- 8. 产线台账（无 clean.csv 产线维度时的计划/合格基准，per-line 表用）----
 lines:
   - line: 一号产线
     planned: 960
@@ -15,3 +128,8 @@ lines:
     produced: 806
     good: 791
     oee: 83.4
+  - line: 三号产线
+    planned: 720
+    produced: 689
+    good: 655
+    oee: 79.8

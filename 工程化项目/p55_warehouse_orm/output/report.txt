@@ -1,20 +1,152 @@
 ================================================================
-生成时间: 2026-10-19 18:30:05
+生成时间: 2026-10-28 05:08:58
 ================================================================
 
-[输入口径]
+[环境]
 ----------------------------------------------------------------
-500 条记录｜索引列 device_id｜字段 device_id/temp/press
+Python 3.12.11 / SQLAlchemy 2.1.3 / 库 sqlite:////Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p55_warehouse_orm/output/warehouse.db
+数据来源：P4缓冲库 buffer.db（468 行）；导入后 records 总行数 1436
+外键约束强制：孤儿记录插入被库拒绝 = 是（IntegrityError）
 
-[查询计划]
+[D层·ER设计与四表建表]
 ----------------------------------------------------------------
-等值+索引: INDEX SCAN on device_id（0.0042 ms）
-无索引范围: FULL SCAN on sensor_log（0.6268 ms）
+ER 概览（四表）：
+  devices(设备)  1───N  points(测点)  1───N  records(采集记录)
+      │                                          ▲ idx_dev_ts(point_id, ts)
+      └──────────── 1───N ───────────────────────┘
+  devices(设备)  1───N  alarms(告警事件)   —— 告警挂设备
+主外键：points.device_id→devices.id  records.point_id→points.id
+        alarms.device_id→devices.id（外键约束由库强制，孤儿记录被拒）
+建表：devices / points / records / alarms（SQLAlchemy 2.x DeclarativeBase 声明式）
 
-[查询结果]
+[C层·入库与统计查询]
 ----------------------------------------------------------------
-device_id=DEV-03 命中 50 条
+种子数据：设备 3、测点 6、记录 500、告警 57（seed=7，bulk_save_objects 分批入库，事务提交 5 次）
+P4缓冲导入：源行 468 → 写入记录 936 条，每批 100 条一个事务，共提交 10 次
+
+T4a 各设备平均vib（JOIN+GROUP BY+func.avg）:
+设备      平均vib   记录数
+------  ------  ---
+DEV-01  3.8581  174
+DEV-02  4.1893  371
+DEV-03  3.9144  173
+
+T4b 告警Top3设备（告警JOIN设备 GROUP BY 降序 LIMIT）:
+设备      车间      告警数
+------  ------  ---
+DEV-02  SMT车间B  22 
+DEV-03  装配车间C   22 
+DEV-01  SMT车间A  13 
+
+T4c 按小时聚合记录数（SQLite 用 func.strftime，date_trunc 不可用）——前8小时:
+小时                记录数
+----------------  ---
+2026-04-01 00:00  60 
+2026-04-01 01:00  60 
+2026-04-01 02:00  60 
+2026-04-01 03:00  60 
+2026-04-01 04:00  60 
+2026-04-01 05:00  60 
+2026-04-01 06:00  60 
+2026-04-01 07:00  60 
+
+[C层·溯源查询（告警→设备→测点→同刻原始读数，四表 JOIN）]
+----------------------------------------------------------------
+可溯源告警 57/57 条｜外键孤儿行 records.point_id=0、points.device_id=0、alarms.device_id=0
+样例（真实 JOIN 反查，非示意）:
+告警  设备      时刻                   级别  同刻读数 
+--  ------  -------------------  --  -----
+1   DEV-01  2026-04-01 00:06:00  1   4.879
+2   DEV-03  2026-04-01 00:08:00  1   4.792
+3   DEV-03  2026-04-01 00:56:00  1   5.257
+
+[B层·数据字典（来自真实库 introspection）]
+----------------------------------------------------------------
+表        列          类型            PK  FK          可空        含义                        
+-------  ---------  ------------  --  ----------  --------  --------------------------
+devices  id         INTEGER       PK              NOT NULL  设备主键                      
+devices  code       VARCHAR(16)                   NOT NULL  设备编号（唯一，如 DEV-01）         
+devices  name       VARCHAR(64)                   NOT NULL  设备名称                      
+devices  area       VARCHAR(32)                   NOT NULL  车间：设备归属产线车间               
+points   id         INTEGER       PK              NOT NULL  测点主键                      
+points   device_id  INTEGER           devices.id  NOT NULL  外键→devices.id（设备1-N测点）    
+points   metric     VARCHAR(16)                   NOT NULL  测点类型：temp=温度 / vib=振动     
+points   unit       VARCHAR(8)                    NOT NULL  工程单位（℃ / mm·s⁻¹）          
+records  id         INTEGER       PK              NOT NULL  记录主键                      
+records  point_id   INTEGER           points.id   NOT NULL  外键→points.id（联合索引最左列）     
+records  ts         DATETIME                      NOT NULL  采集时刻（UTC，DateTime 列，不存字符串）
+records  value      FLOAT                         NOT NULL  测点读数                      
+alarms   id         INTEGER       PK              NOT NULL  告警主键                      
+alarms   device_id  INTEGER           devices.id  NOT NULL  外键→devices.id（告警挂设备）      
+alarms   ts         DATETIME                      NOT NULL  告警发生时刻                    
+alarms   level      INTEGER                       NOT NULL  级别：1=超预警线 2=超危险线          
+alarms   message    VARCHAR(128)                  NOT NULL  告警描述                      
+alarms   resolved   BOOLEAN                       NOT NULL  是否已消警                     
+
+字典完整性实测：18/18 列有成文含义（未登记:无）；ORM Column(comment=) 声明 8 列为补充证据（SQLite 不持久化 COMMENT，故以 FIELD_MEANINGS 为准）
+N+1 规避取证（事件监听数 SELECT 条数，与墙钟无关）：懒加载 4 条 vs joinedload 1 条 vs selectinload 2 条（3 台设备；本项目采用 joinedload）
+
+[A层·窗口函数环比（ORM=裸SQL 双形态一致）]
+----------------------------------------------------------------
+小时                记录数  上期    环比    
+----------------  ---  ----  ------
+2026-04-01 00:00  60   None  None  
+2026-10-12 11:00  216  20    9.8   
+2026-10-27 14:00  600  216   1.7778
+2026-04-01 01:00  60   60    0.0   
+2026-04-01 02:00  60   60    0.0   
+……（共 12 个小时桶；ORM 与 session.execute(text(...)) 裸SQL 结果逐行相等）
+
+[A层·复杂查询：设备×小时 四表 JOIN 聚合（前 8 桶）]
+----------------------------------------------------------------
+聚合桶 36 个（设备 3 台）；与 Python 逐行手算一致 = 是（容差 0.005）
+口径：records↔points↔devices 内连接 + alarms 按(设备,小时)对齐外连接，聚合 count(distinct)/avg(case)/max(level)
+小时                设备      记录数  平均温度    平均振动   告警数  状态  
+----------------  ------  ---  ------  -----  ---  ----
+2026-04-01 00:00  DEV-01  20   65.86   3.431  1    WARN
+2026-04-01 00:00  DEV-02  20   60.925  3.061  0    RUN 
+2026-04-01 00:00  DEV-03  20   60.787  3.839  2    WARN
+2026-04-01 01:00  DEV-01  20   58.883  3.304  2    WARN
+2026-04-01 01:00  DEV-02  20   60.652  3.941  5    WARN
+2026-04-01 01:00  DEV-03  20   63.973  3.684  3    WARN
+2026-04-01 02:00  DEV-01  20   63.566  3.522  0    RUN 
+2026-04-01 02:00  DEV-02  20   63.952  3.783  3    WARN
+（完整 36 桶见 output/result.json 的 complex_summary）
+
+[A层·导入 P3 仪表盘形成闭环（交接文件）]
+----------------------------------------------------------------
+交接文件：output/p3_dashboard_handoff.csv（存在=是）
+导出 36 行 × 列 ts/device_id/line/temp/vib/status｜时间可解析失败 0 行、未知设备 0 个、空值单元 0 个
+状态分布 {'DOWN': 4, 'RUN': 16, 'WARN': 16}（2级告警→DOWN、1级→WARN、无告警→RUN）
+闭环演示命令：cd ../p33_kpi_cockpit && python run.py --source csv --csv ../p55_warehouse_orm/output/p3_dashboard_handoff.csv
+契约说明：只导出 P3 data_source.CANON 中本仓库真实可得的 6 列；生产计数 output/ok_qty/yield_pct 不在采集仓库里，由 P3 按其 provenance 规则标「合成·seed」，本项目不伪造
+
+[B层·索引优化 EXPLAIN 证据（EXPLAIN QUERY PLAN via text()）]
+----------------------------------------------------------------
+bench_records 20000 行×7 次实测，区间命中 240 行；耗时/提速倍数等墙钟毫秒只写 runtime/bench.json（不进 output/，保证逐字节复现）
+  records 表 idx_dev_ts(point_id, ts) 由 ORM __table_args__ 声明；基准在等结构副本表 bench_records 上做大样本实测以免污染业务表
+建索引前计划: SCAN bench_records
+建索引后计划: SEARCH bench_records USING COVERING INDEX idx_bench_dev_ts (point_id=? AND ts>? AND ts<?)
+计划形态判定：建索引前全表 SCAN = 是｜建索引后 SEARCH USING INDEX = 是（生产表 records 的 idx_dev_ts 由 ORM __table_args__ 声明，本次基准在等结构副本表上实测）
+
+慢查询Top3（按实测中位耗时排序取前 K，排序值见 runtime/bench.json；此处列确定性执行计划）:
+#  查询                                    执行计划                                                                            
+-  ------------------------------------  --------------------------------------------------------------------------------
+1  全表聚合：按小时统计记录数                         SCAN records USING COVERING INDEX idx_dev_ts / USE TEMP B-TREE FOR GROUP BY     
+2  三表JOIN：各设备平均vib                       SCAN p / SEARCH d USING INTEGER PRIMARY KEY (rowid=?) / SEARCH r USING INDEX idx
+3  无最左前缀：仅按 ts 范围查（idx_dev_ts 不生效→教学案例）  SCAN records USING COVERING INDEX idx_dev_ts                                    
+
+[分层达标]
+----------------------------------------------------------------
+D层 及格「4表设计合理；ORM入库成功；2条统计查询可用」: 建表 4/4 张（缺:无）｜records 入库 1436 行（种子 500＋P4缓冲 936，预期 1436，相符=是）｜统计查询可用 3/3 条（T4a 3 行、T4b 3 行、T4c 12 行；门槛 ≥2 条）→ 达标
+C层 良好「数据字典完整；批量事务；溯源查询正确」: 数据字典 18/18 列有成文含义（未登记:无）｜批量事务 bulk_save_objects 分批提交 15 次（种子 5＋缓冲 10，每批≤100 条）｜溯源 alarms→devices→points→records 四表 JOIN 命中 57/57 条告警、外键孤儿行 0（100.0%）→ 达标
+B层 优秀「索引优化有EXPLAIN证据；N+1问题已规避」: bench_records 20000 行区间查询命中 240 行，建索引前全表 SCAN=是 → 建索引后 SEARCH USING INDEX=是（计划行见本报告「B层·索引优化」段，墙钟毫秒只写 runtime/bench.json 不入 output/）｜N+1 实测：懒加载 4 条 SELECT vs joinedload 1 条（3 台设备）→ 达标
+A层 超优「优秀+复杂查询(多表JOIN聚合)+导入P3仪表盘形成闭环演示」: 设备×小时四表 JOIN 聚合 36 桶（3 台设备），与逐行手算一致=是；窗口环比 12 桶 ORM=裸SQL 一致｜P3 交接文件 output/p3_dashboard_handoff.csv：36 行×6 列[ts/device_id/line/temp/vib/status]，时间解析失败 0 行、未知设备 0 个、缺列:无 → 达标
 
 [结论与建议]
 ----------------------------------------------------------------
-索引只加速'等值+高选择率'查询；范围/低选择率仍走全表扫描——这就是生产库要写查询计划的原因
+1) 四表 ER+外键约束+联合索引 idx_dev_ts(point_id, ts) 已在 ORM 声明式模型落地：孤儿插入被库拒绝、库内孤儿行 0、数据字典 18/18 列有成文含义；
+2) 批量入库一律 bulk_save_objects + 分批提交事务（种子 5 次＋缓冲 10 次＝15 次，每批≤100 条），未使用循环单条 add；
+3) 统计查询、四表溯源、窗口环比、复杂聚合、数据字典、EXPLAIN 计划行全部来自本次真实运行；tiers/tier_criteria 逐条可被配置证伪（见 docs/03 §6）；
+4) 实测毫秒只在 runtime/bench.json（本次基准参数 {'rows': 20000, 'reps': 7, 'seed': 7, 'topk': 3}），故 output/ 除报告时间戳外逐字节可复现；--index-bench 可重新实测。
+5) 未达标层级看「分层达标」行的实测数字：哪一项为否就补哪一项，对应做法与判定口径写在 docs/03 §6。

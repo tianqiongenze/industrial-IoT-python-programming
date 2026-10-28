@@ -10,7 +10,19 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 DEFAULTS: Dict[str, Any] = {
-    "warn": 80.0, "danger": 95.0, "unit": "c", "seed": 7, "topk": 2,
+    # P5 领域缺省：warn/danger 为振动(mm/s)预警/危险线，与工单告警口径一致
+    "warn": 4.5, "danger": 6.0, "unit": "mm/s", "seed": 7, "topk": 3,
+    "db_url": "sqlite:///output/warehouse.db", "buffer_db": "../../buffer.db",
+    "n_records": 500, "batch_size": 100,
+    "index_bench_rows": 20000, "index_bench_reps": 7,
+    # buffer.db 缺失时的确定性替代源行数（设 0 = 无缓冲数据，闸门据此判不达标）
+    "buffer_stand_in_rows": 108,
+    # 分层闸门阈值（D 层至少要跑通几条统计查询；工单及格线 = 2 条）
+    "min_stat_queries": 2,
+    # B 层 N+1 规避手段：joinedload / selectinload / lazy（lazy = 不规避）
+    "n_plus_one_loader": "joinedload",
+    # A 层 P3 仪表盘闭环交接文件（相对项目根；置空 = 关闭交接，A 层判不达标）
+    "p3_handoff": "output/p3_dashboard_handoff.csv",
 }
 
 
@@ -102,12 +114,12 @@ def yaml_lite(text):
 
 @dataclass
 class Settings:
-    """本项目全部可调参数（YAML 驱动）。"""
-    warn: float = 80.0
-    danger: float = 95.0
-    unit: str = "c"
+    """本项目全部可调参数（YAML 驱动；缺省值与 DEFAULTS 一致）。"""
+    warn: float = 4.5
+    danger: float = 6.0
+    unit: str = "mm/s"
     seed: int = 7
-    topk: int = 2
+    topk: int = 3
     items: List[Any] = field(default_factory=list)
     raw: Dict[str, Any] = field(default_factory=dict)
 

@@ -10,7 +10,18 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 DEFAULTS: Dict[str, Any] = {
-    "warn": 80.0, "danger": 95.0, "unit": "c", "seed": 7, "topk": 2,
+    # P6 领域缺省（与 config/rules.yaml 一一对应，每个键都被代码读取）
+    "features_path": "../../features.npy",
+    "labels_path": "../../labels.npy",
+    "teacher_model": "../../model_v1.joblib",
+    "p5_db": "../p55_warehouse_orm/output/warehouse.db",
+    "model_name": "model_v1.joblib",
+    "n_features": 30, "n_fallback": 200, "seed": 42,
+    "test_size": 0.25, "cv_folds": 5, "min_f1": 0.80,
+    "grid_n_estimators": [50, 100, 200], "grid_max_depth": [4, 6, None],
+    "port": 8899, "host": "127.0.0.1",
+    "bench_requests": 100, "warmup": 5, "window_size": 32, "teacher_samples": 10,
+    "explain_topk": 3,
 }
 
 
@@ -102,12 +113,12 @@ def yaml_lite(text):
 
 @dataclass
 class Settings:
-    """本项目全部可调参数（YAML 驱动）。"""
-    warn: float = 80.0
-    danger: float = 95.0
-    unit: str = "c"
-    seed: int = 7
-    topk: int = 2
+    """本项目全部可调参数（YAML 驱动；raw 保留全量键供各层读取）。"""
+    seed: int = 42
+    min_f1: float = 0.80
+    test_size: float = 0.25
+    port: int = 8899
+    model_name: str = "model_v1.joblib"
     items: List[Any] = field(default_factory=list)
     raw: Dict[str, Any] = field(default_factory=dict)
 
@@ -118,7 +129,6 @@ class Settings:
         d = dict(DEFAULTS, **d)
         items = d.get("items")
         if not items:
-            # 数据集键名不限 items：devices / raw_lines / fleet / readings / corpus ...
             for k, v in d.items():
                 if isinstance(v, list) and v and isinstance(v[0], (dict, str, int, float)):
                     items = v
@@ -128,8 +138,9 @@ class Settings:
         if not isinstance(items, list):
             items = [items]
         return cls(
-            warn=float(d["warn"]), danger=float(d["danger"]), unit=str(d["unit"]),
-            seed=int(d["seed"]), topk=int(d["topk"]),
+            seed=int(d["seed"]), min_f1=float(d["min_f1"]),
+            test_size=float(d["test_size"]), port=int(d["port"]),
+            model_name=str(d["model_name"]),
             items=items, raw=d,
         )
 

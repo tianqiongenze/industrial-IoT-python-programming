@@ -1,8 +1,9 @@
-# 数据仓库 ORM —— 依赖清单（精确版本锁定）
-# 生成方式：在本机已校准环境中读取实际安装版本（== 保证课堂结果可复现）
+# 数据仓库 ORM —— 依赖清单（精确版本锁定，取自课程环境 pp03 实测版本）
 # 用法：pip install -r requirements.txt
 # 说明：
-#   1. 已安装包用 == 精确锁定；标 `# 待核验` 者本机未安装，请安装后回填版本。
-#   2. pyproject.toml 保留区间声明（库规范），此处用精确版（教学可复现）。
-#   3. 离线环境：pip install --no-index --find-links=./offline_wheels -r requirements.txt
-# 本项目仅依赖 Python 标准库，无需第三方包
+#   1. 已安装包用 == 精确锁定（课堂结果可复现）；pyproject.toml 保留区间声明。
+#   2. 离线环境：pip install --no-index --find-links=./offline_wheels -r requirements.txt
+#   3. PyYAML 缺失时代码自动降级内置 yaml_lite 解析器（config.py），故标为可选。
+SQLAlchemy==2.1.3
+PyYAML==6.0.2  # 可选（缺失自动降级 yaml_lite）
+# 开发/测试依赖：pytest==9.1.1（见 pyproject.toml [project.optional-dependencies].dev）

@@ -4,19 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "p11_exercises"
-version = "1.0.0"
-description = "Python 五题闯关（03-Python程序设计-项目实战 W01 第1次课）"
+version = "2.2.0"
+description = "Python 五题闯关（03-Python程序设计-项目实战 W01 第1次课·工单 P1.1）"
 requires-python = ">=3.10"
+# 运行本体零强制依赖（只用标准库）；下面两项是"课堂可选增强"：
+# PyYAML 缺失时 config.py 自动降级 yaml_lite，pytest 缺失时 run.py 仍可跑。
 dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "PyYAML>=6.0"]
 
+# 入口点真实存在：src/exercise_five/cli.py:42 def main(argv=None)
 [project.scripts]
 p11_exercises = "exercise_five.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -25,3 +28,22 @@ where = ["src"]
 testpaths = ["tests"]
 addopts = "-q --tb=short"
 pythonpath = ["src"]
+
+# ---- 规范工具配置（课堂 pp03 实测未安装，装上即生效；未装时 run.py 只在
+# ---- output/report.txt 写「不可用」，改用内置 stylecheck 的 PEP 8 子集实测）
+[tool.black]
+line-length = 79
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.pylint.format]
+max-line-length = 79
+
+[tool.pylint.messages_control]
+disable = ["too-few-public-methods"]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "a", "b", "c", "d", "f", "k_", "ex", "cfg", "run", "id"]

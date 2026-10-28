@@ -1,0 +1,15 @@
+{
+  "all_ms": [
+    30.156,
+    33.192,
+    31.488,
+    23.89,
+    29.052
+  ],
+  "best_ms": 23.89,
+  "excellent_ms": 50.0,
+  "load_ms": 44.679,
+  "note": "墙钟实测值（best_ms/all_ms/load_ms）只写本文件，且本文件在 output/ 之外 ⇒ output/ 逐字节可复现",
+  "samples": 1000,
+  "target_ms": 100.0
+}

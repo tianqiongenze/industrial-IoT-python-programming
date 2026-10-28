@@ -1,9 +1,95 @@
+# warn: 温度工艺预警线（℃）——超过即打 temp_warning 旗标（只标记不删除）
 warn: 80.0
+# danger: 温度工艺停机红线（℃）——超过即打 temp_danger 旗标（只标记不删除）
 danger: 95.0
-temp_max: 120.0
-vib_min: 0.0
-vib_max: 15.0
-target_quality: 0.85
+# unit: 温度单位口径（报告/台账/特征字典里的量纲标注）
 unit: "c"
+# seed: 随机种子（合成脏数据 / 压测数据全部由此派生，二次运行逐字节一致）
 seed: 7
+# topk: 报告与台账中列示的 Top-N 条目数（缺失率排行、设备留痕排行）
 topk: 3
+# PEP 8 达标线（内置子集实测，口径与 p11_exercises 一致，非 pylint 评分）：
+#   pep8_pass_rate      = D 层（及格）通过线：达标率 ≥75% 才算 D 层
+#   pep8_pass_rate_high = B 层（优秀）通过线：达标率 ≥85% 才算 B 层
+# 改这两个键即可移动分层带（改配置不改代码），_validate 保证 D 线 ≤ B 线。
+pep8_pass_rate: 75.0
+pep8_pass_rate_high: 85.0
+
+io:
+  # 真实脏数据来源：课程包根目录 p21_raw.csv（相对本项目目录）
+  input: "../../p21_raw.csv"
+  # 主输入缺失时的备选（同内容历史文件名），仍缺失则报错并给出候选清单
+  input_fallback: "../../W03_raw.csv"
+  out_clean_csv: "clean.csv"
+  out_log: "clean_log.txt"
+  out_result_json: "result.json"
+  out_report: "report.txt"
+  out_strategies: "missing_strategies.csv"
+  out_state: "state.json"
+  out_anomalies: "anomalies.csv"
+
+pipeline:
+  # 步骤0/TODO-1 摸底：进门先体检，缺列即拒收（不盲洗）
+  required_columns: ["device_id", "ts", "temp", "press", "status"]
+  numeric_columns: ["temp", "press"]
+  temp_column: "temp"
+  press_column: "press"
+  id_column: "device_id"
+  id_pattern: 'DEV-\d{2}'
+  ts_column: "ts"
+  status_column: "status"
+  status_allowed: ["RUN", "IDLE", "FAULT", "MAINT"]
+  # TODO-3 类型转换：时间戳三种格式各解析一次再 combine_first 合并
+  ts_formats: ["%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M", "%Y%m%d%H%M%S"]
+  # 整列缺失率超过该比例 → 判定该列不可用，整列剔除（决策矩阵第1档）
+  drop_column_missing_ratio: 0.30
+  # TODO-2 缺失处理：三类列三种策略（决策矩阵第2/3档）
+  missing_strategy:
+    interpolate: ["temp"]     # 时序连续数值列 → 设备组内线性插值（保时间轴）
+    median: ["press"]         # 非时序数值列 → 中位数（抗离群）
+    mode: ["status"]          # 类别列 → 众数，全空则用 unknown_label 兜底
+    unknown_label: "UNKNOWN"
+  # 插值/填充后仍缺这些关键列的行才丢弃（dropna 是最后兜底，不是第一招）
+  dropna_columns: ["temp", "ts", "press"]
+  # TODO-4 异常检测：IQR 统计护栏 + 业务阈值，两条规则分别计数后取并集
+  iqr_columns: ["temp"]
+  iqr_k: 1.5
+  # 业务阈值（工艺物理限位）——校验与异常剔除共用同一份配置
+  temp_min: 20.0
+  temp_max: 120.0
+  press_min: 0.1
+  press_max: 1.0
+  # 越界处理：remove=剔行（教师版口径）；clip=收敛到护栏（进阶口径，保行数）
+  outlier_action: "remove"
+  # 工艺红线旗标列名（warn/danger 只打旗不删行；列名也外置，便于换口径）
+  warning_column: "temp_warning"
+  danger_column: "temp_danger"
+  # TODO-5 去重：同设备同时刻视为重复采集（语义去重，非整列去重）
+  dedupe_subset: ["device_id", "ts"]
+  dedupe_keep: "first"
+  # TODO-6 校验：区间断言 + 设备内时间单调（A 层自定义规则用 df.query 语法）
+  strict_validate: true
+  custom_rules:
+    - "temp >= 30 and temp <= 110"
+    - "press >= 0.2 and press <= 0.9"
+    - "status != 'OFF'"
+
+quality:
+  # 口径（docs/03 §2）：完整性40 + 合规性30 + 一致性20 + 时间性10 = 100
+  weights:
+    completeness: 40
+    accuracy: 30
+    consistency: 20
+    timeliness: 10
+  # 唯一性单列为硬性门禁（重复率必须为 0），不参与加权，避免"刷分"
+  max_duplicate_rate: 0.0
+  # 工单验收线（档位字母以《P2.1工单》为准）：D 及格 85 / C 良好 88 / B 优秀 90
+  gates:
+    pass: 85
+    good: 88
+    excellent: 90
+
+perf:
+  # A 层超优口径：100 万行端到端 < 5 分钟
+  bench_rows: 1000000
+  bench_budget_seconds: 300

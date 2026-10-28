@@ -1,22 +1,99 @@
 ================================================================
-生成时间: 2026-10-19 18:30:04
+生成时间: 未启用（加 --stamp 写入墙钟时间戳；耗时/定时等墙钟观测值见 output/timing.txt）
 ================================================================
 
-[输入口径]
+[工单 TODO 覆盖]
 ----------------------------------------------------------------
-产线 2 条｜5 个 KPI（合格率/OEE/告警/在线/达成）
+TODO-0 数据源 clean.csv 优先｜本次实际：P2.1 清洁产出 ../p21_pandas_clean/output/clean.csv (sha256=625d68705c79, 1186 行)（模式 clean）
+TODO-1 侧栏日期范围+设备多选 → app.py 与本 CLI 同用 core.filter_records()
+TODO-2 四个 KPI 指标卡 → 总产量 / 平均良率 / 设备在线数 / 今日告警数
+TODO-3 产量趋势 px.line + st.plotly_chart(on_select="rerun") → 点击折线点联动明细
+TODO-4 良率仪表 + 设备红绿灯 + 告警表（告警 357 条，表支持行选择联动钻取）
+TODO-5 效率对标 st.progress（100.5%）
+P3.2 四段式日报 → daily_report.html（Jinja2 3.1.6（StrictUndefined+autoescape））
 
-[KPI 驾驶舱]
+[分层达标（D/C/B/A）]
+----------------------------------------------------------------
+及格(D) 5 KPI可用+时间筛选；日报四部分完整+PDF正确 → 必做 KPI 5/5 全有值；时间筛选：同一 core.filter_records 缩到单日 2026-03-01 命中 47 行（全量 1186）；四段 生产概览 / 详细分析 / 异常识别 / 数据附表 全部见于 daily_report.html；PDF daily_report.pdf 校验通过：42190 B / 4 页，%PDF- 头与 %%EOF 尾齐 → 达标
+良好(C) 联动筛选流畅；日报生成<2分钟 → 联动程序化验证（同一 core.filter_records）：单日命中 47/1186 行；仅选 DEV-01 命中 296 行、总产量 14939＜全量 60273（筛选真的驱动重算）；app.py on_select="rerun" 接线 2 处 → core.drill_rows 联动明细 30 行（回路非空）；AppTest 无头真执行 app.py 并断言切换单日后命中变小（tests/test_dashboard.py，非肉眼验收）；日报耗时档位 <1s（预算 120s，判定行不含毫秒，精确秒数在 timing.txt/runtime/）→ 达标
+优秀(B) ≥7指标+钻取交互；异常自动识别；美观度≥4/5 → 指标实得 9 个；钻取：复放选择事件 x=['2026-03-03', '2026-03-05', '2026-03-07'] → 联动明细 30 行（上限 30）指纹 crc32=e89f637a（跨 PYTHONHASHSEED 稳定）；异常自动识别命中 357 条（temp>90.0 或 vib>4.5，逐条附处置建议）；美观度 5/5（≥4 达标；标题层级 1/1、单位标注 1/1、配色 1/1、图例 1/1、响应式 1/1；扣分项：无） → 达标
+超优(A) 优秀+定时自动生成(mailto/计划任务)+移动端适配 → 继承优秀(B)：达标；定时：schedule.at=07:30 解析为每日 07:30，下次触发为真实 datetime 且晚于此刻（墙钟值写 runtime/schedule_state.txt 与 output/timing.txt，不进判定行）；计划任务 4 件产物已渲染（crontab/systemd/launchd/mailto，写 runtime/schedule/）；mailto 收件人 line-lead@example.com 且 subject/body 齐；移动端：viewport=True flex=True media=True 窄屏断点 600px（config 上限 768px）→ 达标
+保底自检（不计入工单档位）：跟做示例跑通任务1、程序出结果 → 四段式日报段数 4、KPI 9 项、窗口 1186 行、产物落盘 5/5（daily_report.html+daily_report.pdf+kpi.json+appendix.csv+trend_chart.png；result.json/report.txt 由本流水线随后写出）→ 通过
+
+[数据源实况（TODO-0）]
+----------------------------------------------------------------
+模式：clean
+来源：P2.1 清洁产出 ../p21_pandas_clean/output/clean.csv (sha256=625d68705c79, 1186 行)
+列级出处：device_id=文件原始, line=派生·产线台账, ok_qty=合成·seed=2026, output=合成·seed=2026, status=文件原始, temp=文件原始, ts=文件原始, vib=合成·seed=2026, yield_pct=派生·ok_qty/output
+行数：全量 1186｜窗口 1186｜设备 4 台｜覆盖 25 天
+
+[产线台账（config/lines，保底自检材料）]
 ----------------------------------------------------------------
 产线      计划  产出  合格  合格率  达成率  OEE% 
 --------  ----  ----  ----  ------  ------  -----
 一号产线  960   912   896   98.25%  95.00%  86.6%
 二号产线  840   806   791   98.14%  95.95%  83.4%
+三号产线  720   689   655   95.07%  95.69%  79.8%
 
-[关注项]
+[KPI 驾驶舱（TODO-2/3/4/5）]
 ----------------------------------------------------------------
-最低合格率 98.14%（二号产线）需当日复盘
+指标        读数        环比  灯态 
+----------  ----------  ----  -----
+总产量      60,273      -     ok   
+平均良率    92.40%      -     warn 
+设备在线数  4/4         -     ok   
+今日告警数  357         -     error
+效率对标    100.5%      -     ok   
+OEE均值     83.27%      -     ok   
+计划达成率  95.52%      -     ok   
+平均温度    64.85 ℃     -     ok   
+最高振动    5.999 mm/s  -     error
+良率仪表读数 92.40%（warn）｜告警 357 条｜效率对标 100.5%（截断 100.0%）
+趋势采样点 25（app.py 用 px.line 渲染，日报用内联 SVG/PNG）
 
-[升级路径]
+[异常识别与处置建议（P3.2-3）]
 ----------------------------------------------------------------
-streamlit 已安装——可运行 `streamlit run app.py` 升级为交互仪表盘
+超阈值 357 条（temp>90.0 或 vib>4.5），报告前 5 条：
+> 2026-03-03 00:30:00 DEV-02 temp=57.2 vib=5.999 → 振动 5.999 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。
+> 2026-03-20 04:00:00 DEV-01 temp=50.36 vib=5.999 → 振动 5.999 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。
+> 2026-03-11 12:00:00 DEV-01 temp=73.51 vib=5.998 → 振动 5.998 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。
+> 2026-03-08 22:00:00 DEV-01 temp=61.04 vib=5.979 → 振动 5.979 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。
+> 2026-03-24 20:30:00 DEV-02 temp=84.29 vib=5.977 → 振动 5.977 mm/s > 限值 4.500 mm/s：疑似不平衡/轴承磨损/地脚松动。建议：①复检地脚螺栓扭矩；②安排动平衡；③连续 3 点超标即换轴承并录台账。
+
+[四段式日报产物]
+----------------------------------------------------------------
+HTML：daily_report.html（渲染器：Jinja2 3.1.6（StrictUndefined+autoescape））
+四段：生产概览 / 详细分析 / 异常识别 / 数据附表
+附表行数：50（config/report.tail_rows）
+PDF：reportlab PDF（中文字体 内置 CID STSong-Light；仓库 OTF 为 CFF 轮廓，reportlab TTFont 不支持故未采用）｜校验：校验通过：42190 B / 4 页，%PDF- 头与 %%EOF 尾齐（下限 1500 B，实测 42190 B / 4 页）
+趋势图：matplotlib PNG（已出图）
+
+[依赖探测与运行模式]
+----------------------------------------------------------------
+已安装(原生启用): streamlit, plotly, jinja2, reportlab, pandas, yaml ｜ 缺失(降级兜底): 无
+streamlit 1.65.0 已安装：`streamlit run app.py` 起真仪表盘；离线无头验证入口 `python run.py --app-check`（streamlit.testing.v1.AppTest 执行同一份 app.py）
+
+[联动钻取证据（优秀(B)·可复核）]
+----------------------------------------------------------------
+复放选择事件：points=[{'x': '2026-03-03'}, {'x': '2026-03-05'}, {'x': '2026-03-07'}]（趋势线数据行最多的前 3 个时间桶，按 n 降序、同 n 按桶名升序）
+core.drill_rows 联动明细 30 行（上限 drill.max_rows=30｜列=ts,device_id,line,output,ok_qty,temp,vib,status）
+明细指纹 crc32=e89f637a（zlib.crc32，跨 PYTHONHASHSEED 稳定；builtin hash() 不可当证据）
+app.py 接线：st.plotly_chart(on_select="rerun", key="trend_drill") ＋ st.dataframe(on_select="rerun", key="alarm_table")，同一 core.drill_rows
+
+[定时/邮件/移动端（超优(A)·可复核）]
+----------------------------------------------------------------
+定时时刻 07:30：解析为每日 07:30，下次触发为真实 datetime——墙钟观测值只写 runtime/schedule_state.txt 与 output/timing.txt（以保证 output/ 其余文件逐字节可复现）
+计划任务行：30 7 * * * cd /Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit && /opt/anaconda3/envs/pp03/bin/python run.py --schedule-fire --schedule-at 07:30 --config /Users/joelgong/PycharmProjects/ai-course-teaching-resources/03-Python程序设计-项目实战/工程化项目/p33_kpi_cockpit/config/rules.yaml >> output/schedule.log 2>&1
+systemd timer：[Unit] | Description=p33_kpi_cockpit 自动日报（P3 超优(A) 层） |  | [Timer] | OnCalendar=*-*-* 07:30:00 | Persistent=true |  | [Install] | WantedBy=timers.target
+launchd plist：StartCalendarInterval Hour=7 Minute=30 已渲染
+计划任务产物已写 runtime/schedule/（crontab.txt/p33-daily-report.timer/com.p33.kpi-daily-report.plist/mailto.txt 共 4 件，output/ 之外）
+邮件正文链接：mailto:line-lead%40example.com?subject=每日生产分析报告%202026-03-01~2026-03-25&body=总产量%3D60,273%0A平均良率%3D92.40%25%0A设备在线数%3D4/…
+移动端适配：viewport=True flex=True media=True 窄屏断点=600px（config 上限 768px）
+钻取：DEV-01 产量14939 良率92.19% 告警100
+
+[运行自检]
+----------------------------------------------------------------
+日报耗时 <1s（预算 120s）→ 达标（工单 P3.2 时限）；判定行不含毫秒，精确秒数见 output/timing.txt 与 runtime/timing.txt
+KPI 项数 9 ≥ 7 → 达标（工单优秀(B) 佐证，判定见「分层达标」）
+必做 5 KPI 全部有值：True
+时间戳开关：off（off 时 output/ 逐字节可复现；timing.txt 除外）

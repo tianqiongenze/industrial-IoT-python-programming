@@ -4,16 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "p66_ml_service"
-version = "1.0.0"
+version = "2.0.0"
 description = "模型训练与服务（03-Python程序设计-项目实战 W08 第15次课）"
 requires-python = ">=3.10"
-dependencies = ["numpy", "scikit-learn"]
+dependencies = ["numpy>=1.26", "scikit-learn>=1.4", "joblib>=1.3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "PyYAML>=6.0"]
-
-[project.scripts]
-p66_ml_service = "ml_service.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

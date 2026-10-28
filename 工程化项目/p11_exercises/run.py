@@ -1,35 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""项目唯一入口。
+"""项目唯一入口：注入 src 路径后调用 exercise_five.cli.main()。
 
 用法:
-  python run.py                 # 按默认配置跑完整流水线并输出报告
-  python run.py --config x.yaml # 指定配置文件
-  python run.py --outdir out/   # 指定输出目录
-  python run.py --quiet         # 只输出到文件，不打印到控制台
+  python run.py                  # 默认配置跑五题 + 断言 + 分层达标 + 笔记
+  python run.py --tier B         # 按 B 档（工单"优秀"）验收线高亮
+  python run.py --quiet          # 只落盘 output/，不打印报告
+  python run.py --no-notes       # 本次不重写 docs/09 迁移笔记
+  python run.py --list-tools     # 探测 pylint/flake8/black/pre-commit
+  python run.py --config X --outdir Y
 """
-import argparse
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "src"))
 
-import exercise_five.config as C  # noqa: E402  （sys.path 注入后方可导入，属 src 布局必需）
-import exercise_five.pipeline as P  # noqa: E402
+from exercise_five import cli  # noqa: E402  （src 布局需先注入 sys.path）
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Python 五题闯关")
-    ap.add_argument("--config", default=os.path.join(HERE, "config", "rules.yaml"))
-    ap.add_argument("--outdir", default=os.path.join(HERE, "output"))
-    ap.add_argument("--quiet", action="store_true")
-    a = ap.parse_args(argv)
-    cfg = C.load_config(a.config)
-    sections = P.run(cfg, out_dir=a.outdir)
-    if not a.quiet:
-        print("\n".join(sections[-1][1]) if sections else "")
-    return 0
+    """只做调用与退出码传递（一题一函数，主函数不掺业务）。"""
+    return cli.main(argv)
 
 
 if __name__ == "__main__":

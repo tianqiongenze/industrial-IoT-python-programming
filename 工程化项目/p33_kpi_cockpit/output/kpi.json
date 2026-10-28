@@ -1,5 +1,107 @@
 {
-  "rows": [
+  "window": {
+    "start": "2026-03-01",
+    "end": "2026-03-25",
+    "devices": [
+      "DEV-01",
+      "DEV-02",
+      "DEV-03",
+      "DEV-04"
+    ],
+    "rows_all": 1186,
+    "rows_window": 1186,
+    "days": 25
+  },
+  "kpis": [
+    {
+      "value": 60273,
+      "text": "60,273",
+      "raw": 60273,
+      "total": null,
+      "name": "总产量",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 92.4,
+      "text": "92.40%",
+      "raw": 92.4,
+      "total": null,
+      "name": "平均良率",
+      "delta": "",
+      "tone": "warn"
+    },
+    {
+      "value": 4,
+      "text": "4/4",
+      "raw": 4,
+      "total": 4,
+      "name": "设备在线数",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 357,
+      "text": "357",
+      "raw": 357,
+      "total": null,
+      "name": "今日告警数",
+      "delta": "",
+      "tone": "error"
+    },
+    {
+      "value": 1.0046,
+      "text": "100.5%",
+      "raw": 1.0,
+      "total": null,
+      "name": "效率对标",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 83.27,
+      "text": "83.27%",
+      "raw": 83.27,
+      "total": null,
+      "name": "OEE均值",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 95.52,
+      "text": "95.52%",
+      "raw": 95.52,
+      "total": null,
+      "name": "计划达成率",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 64.85,
+      "text": "64.85 ℃",
+      "raw": 64.85,
+      "total": null,
+      "name": "平均温度",
+      "delta": "",
+      "tone": "ok"
+    },
+    {
+      "value": 5.999,
+      "text": "5.999 mm/s",
+      "raw": 5.999,
+      "total": null,
+      "name": "最高振动",
+      "delta": "",
+      "tone": "error"
+    }
+  ],
+  "source": "P2.1 清洁产出 ../p21_pandas_clean/output/clean.csv (sha256=625d68705c79, 1186 行)",
+  "gauge": {
+    "value": 92.4,
+    "delta": -2.6,
+    "tone": "warn"
+  },
+  "ledger": [
     {
       "line": "一号产线",
       "planned": 960,
@@ -17,7 +119,57 @@
       "oee": 83.4,
       "good_rate": 0.9814,
       "plan_rate": 0.9595
+    },
+    {
+      "line": "三号产线",
+      "planned": 720,
+      "produced": 689,
+      "good": 655,
+      "oee": 79.8,
+      "good_rate": 0.9507,
+      "plan_rate": 0.9569
     }
   ],
-  "worst": "二号产线"
+  "device_status": [
+    {
+      "device_id": "DEV-01",
+      "status": "RUN",
+      "alarms": 100,
+      "over_temp": 0,
+      "n": 296,
+      "tone": "error",
+      "light": "红灯"
+    },
+    {
+      "device_id": "DEV-02",
+      "status": "RUN",
+      "alarms": 84,
+      "over_temp": 0,
+      "n": 296,
+      "tone": "error",
+      "light": "红灯"
+    },
+    {
+      "device_id": "DEV-03",
+      "status": "RUN",
+      "alarms": 73,
+      "over_temp": 1,
+      "n": 297,
+      "tone": "error",
+      "light": "红灯"
+    },
+    {
+      "device_id": "DEV-04",
+      "status": "RUN",
+      "alarms": 100,
+      "over_temp": 0,
+      "n": 297,
+      "tone": "error",
+      "light": "红灯"
+    }
+  ],
+  "efficiency": {
+    "clip": 1.0,
+    "raw": 1.0046
+  }
 }

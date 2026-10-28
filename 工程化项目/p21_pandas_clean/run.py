@@ -1,36 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""项目唯一入口。
+"""项目唯一入口（P2.1《Pandas 数据处理管道》）。
 
 用法:
-  python run.py                 # 按默认配置跑完整流水线并输出报告
-  python run.py --config x.yaml # 指定配置文件
-  python run.py --outdir out/   # 指定输出目录
-  python run.py --quiet         # 只输出到文件，不打印到控制台
+  python run.py                    # 七步管道全流程 + 报告（含 A 层增量/压测证据）
+  python run.py --peek             # 课前导学单：只预览脏数据，不写业务产物
+  python run.py --input 路径.csv   # 覆盖输入（默认读课程根目录 p21_raw.csv）
+  python run.py --no-bench         # 跳过 100 万行压测（课堂快跑）
+  python run.py --incremental      # 按 output/state.json 基线只处理增量
+  python run.py --outdir out/      # 指定输出目录
+  python run.py --quiet            # 只落盘，不打印
+  python run.py --stamp            # 报告头写入墙钟（默认关闭以保证逐字节可复现）
 """
-import argparse
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "src"))
 
-import pd_clean.config as C  # noqa: E402  （sys.path 注入后方可导入，属 src 布局必需）
-import pd_clean.pipeline as P  # noqa: E402
-
-
-def main(argv=None):
-    ap = argparse.ArgumentParser(description="Pandas 数据清洗管道")
-    ap.add_argument("--config", default=os.path.join(HERE, "config", "rules.yaml"))
-    ap.add_argument("--outdir", default=os.path.join(HERE, "output"))
-    ap.add_argument("--quiet", action="store_true")
-    a = ap.parse_args(argv)
-    cfg = C.load_config(a.config)
-    sections = P.run(cfg, out_dir=a.outdir)
-    if not a.quiet:
-        print("\n".join(sections[-1][1]) if sections else "")
-    return 0
-
+from pd_clean.cli import main  # noqa: E402  （sys.path 注入后方可导入，src 布局必需）
 
 if __name__ == "__main__":
     sys.exit(main())

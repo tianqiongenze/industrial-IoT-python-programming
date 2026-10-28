@@ -1,0 +1,1 @@
+设备清单表头：id,name,status

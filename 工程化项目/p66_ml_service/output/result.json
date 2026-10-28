@@ -1,15 +1,467 @@
 {
-  "metrics": {
-    "macro_f1": 0.83,
-    "n_train": 450,
-    "n_test": 150
+  "env": {
+    "python": "3.12.11",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4"
   },
-  "min_f1": 0.8,
-  "model": "model.joblib",
-  "sample_pred": [
-    1,
-    1,
-    0
+  "data_source": "真实数据：P2.2 产物 features.npy（200×30）",
+  "evaluate": {
+    "n_train": 150,
+    "n_test": 50,
+    "best_model": "LR",
+    "comparison": {
+      "LR": {
+        "cv_folds": 5,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "test_macro_f1": 1.0,
+        "precision_normal": 1.0,
+        "recall_normal": 1.0,
+        "precision_wear": 1.0,
+        "recall_wear": 1.0,
+        "explain": {
+          "method": "coef_（正类=磨损，符号即影响方向）",
+          "k": 3,
+          "n_features": 30,
+          "top": [
+            {
+              "rank": 1,
+              "feature": "crest",
+              "abs_value": 0.395304,
+              "signed_value": 0.395304
+            },
+            {
+              "rank": 2,
+              "feature": "impulse_factor",
+              "abs_value": 0.39317,
+              "signed_value": 0.39317
+            },
+            {
+              "rank": 3,
+              "feature": "clearance",
+              "abs_value": 0.39242,
+              "signed_value": 0.39242
+            }
+          ]
+        }
+      },
+      "RF": {
+        "cv_folds": 5,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "test_macro_f1": 1.0,
+        "precision_normal": 1.0,
+        "recall_normal": 1.0,
+        "precision_wear": 1.0,
+        "recall_wear": 1.0,
+        "explain": {
+          "method": "feature_importances_",
+          "k": 3,
+          "n_features": 30,
+          "top": [
+            {
+              "rank": 1,
+              "feature": "mean",
+              "abs_value": 0.1,
+              "signed_value": 0.1
+            },
+            {
+              "rank": 2,
+              "feature": "rms",
+              "abs_value": 0.094911,
+              "signed_value": 0.094911
+            },
+            {
+              "rank": 3,
+              "feature": "abs_mean",
+              "abs_value": 0.085,
+              "signed_value": 0.085
+            }
+          ]
+        }
+      },
+      "GBM": {
+        "cv_folds": 5,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "test_macro_f1": 1.0,
+        "precision_normal": 1.0,
+        "recall_normal": 1.0,
+        "precision_wear": 1.0,
+        "recall_wear": 1.0,
+        "explain": {
+          "method": "feature_importances_",
+          "k": 3,
+          "n_features": 30,
+          "top": [
+            {
+              "rank": 1,
+              "feature": "kurtosis",
+              "abs_value": 0.283292,
+              "signed_value": 0.283292
+            },
+            {
+              "rank": 2,
+              "feature": "entropy",
+              "abs_value": 0.210224,
+              "signed_value": 0.210224
+            },
+            {
+              "rank": 3,
+              "feature": "skewness",
+              "abs_value": 0.133875,
+              "signed_value": 0.133875
+            }
+          ]
+        }
+      },
+      "RF-tuned": {
+        "cv_folds": 5,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "test_macro_f1": 1.0,
+        "precision_normal": 1.0,
+        "recall_normal": 1.0,
+        "precision_wear": 1.0,
+        "recall_wear": 1.0,
+        "explain": {
+          "method": "feature_importances_",
+          "k": 3,
+          "n_features": 30,
+          "top": [
+            {
+              "rank": 1,
+              "feature": "mean",
+              "abs_value": 0.12,
+              "signed_value": 0.12
+            },
+            {
+              "rank": 2,
+              "feature": "zero_crossing_rate",
+              "abs_value": 0.1,
+              "signed_value": 0.1
+            },
+            {
+              "rank": 3,
+              "feature": "var",
+              "abs_value": 0.09075,
+              "signed_value": 0.09075
+            }
+          ]
+        }
+      }
+    },
+    "grid_search": {
+      "param_grid": {
+        "n_estimators": [
+          50,
+          100,
+          200
+        ],
+        "max_depth": [
+          "4",
+          "6",
+          "None"
+        ]
+      },
+      "cv": 5,
+      "best_params": {
+        "max_depth": "4",
+        "n_estimators": "50"
+      },
+      "best_cv_score": 1.0,
+      "top5_mean_test": [
+        {
+          "params": {
+            "max_depth": "4",
+            "n_estimators": "50"
+          },
+          "mean_test": 1.0
+        },
+        {
+          "params": {
+            "max_depth": "4",
+            "n_estimators": "100"
+          },
+          "mean_test": 1.0
+        },
+        {
+          "params": {
+            "max_depth": "4",
+            "n_estimators": "200"
+          },
+          "mean_test": 1.0
+        },
+        {
+          "params": {
+            "max_depth": "6",
+            "n_estimators": "50"
+          },
+          "mean_test": 1.0
+        },
+        {
+          "params": {
+            "max_depth": "6",
+            "n_estimators": "100"
+          },
+          "mean_test": 1.0
+        }
+      ]
+    },
+    "confusion_matrix": [
+      [
+        25,
+        0
+      ],
+      [
+        0,
+        25
+      ]
+    ],
+    "test_macro_f1": 1.0,
+    "classification_report_text": "              precision    recall  f1-score   support\n\n          正常     1.0000    1.0000    1.0000        25\n          磨损     1.0000    1.0000    1.0000        25\n\n    accuracy                         1.0000        50\n   macro avg     1.0000    1.0000    1.0000        50\nweighted avg     1.0000    1.0000    1.0000        50\n",
+    "feature_dim": 30,
+    "explain_topk": 3,
+    "explain_feature_source": "data.FEATURE_NAMES（真实数据集列序契约，非硬编码下标）"
+  },
+  "gate": {
+    "min_f1": 0.8,
+    "macro_f1": 1.0,
+    "passed": true
+  },
+  "tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "workorder_tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "workorder_rows": {
+    "D": "诊断模型F1≥0.80并保存；推理服务可调通",
+    "C": "接入数据库联动；延迟记录完整",
+    "B": "模型对比+调参记录；服务异常处理(404/参数错)",
+    "A": "优秀+ONNX导出或版本对比实验；P7综合项目立项书"
+  },
+  "workorder_evidence": {
+    "error_probes": 8,
+    "error_probes_ok": 8,
+    "codes_seen": [
+      200,
+      400,
+      404
+    ],
+    "error_cases_ok": 6,
+    "latency_client_timed": 100,
+    "latency_server_recorded": 105,
+    "latency_records_match": true,
+    "min_latency_records": 50,
+    "onnx_available": false,
+    "version_compared": 10,
+    "version_agreement": 10
+  },
+  "workorder_unmeasured": {
+    "D": [
+      "PEP 8 与注释规范（本项目由 CI lint 侧取证，报告不判）"
+    ],
+    "C": [
+      "延迟的绝对阈值：工单 P6 未给毫秒上限，故本节只判「记录是否完整」，不判快慢"
+    ],
+    "B": [
+      "生产级 ASGI 服务的异常中间件（本项目用标准库 http.server，400/404 分支已逐条实测，见 docs/03 决策矩阵）"
+    ],
+    "A": [
+      "P7 综合项目立项书（交付物在 P7 工程，不在本项目内，见 ../p77 与 docs/07）"
+    ]
+  },
+  "workorder_lines": [
+    "工单及格(D)「诊断模型F1≥0.80并保存；推理服务可调通」: 测试集 macro-F1=1.0000 ≥ 门禁 0.80｜model_v1.joblib + manifest 已落盘｜服务真打一发：/health 与 /predict 均 200（客户端共发 105 次）→ 本节实测项 通过｜未实测项：PEP 8 与注释规范（本项目由 CI lint 侧取证，报告不判）",
+    "工单良好(C)「接入数据库联动；延迟记录完整」: P5 库联动回写 diagnosis 3 条｜延迟记录完整：客户端共发 105 次（含 warmup 5 次）逐条计时 100 条，服务端 stats 同步记录 105 条（两边条数相等=True），计时条数 ≥ 阈值 50（config: min_latency_records）且 mean/p50/p95/p99/max 六项齐备 → 本节实测项 通过｜未实测项：延迟的绝对阈值：工单 P6 未给毫秒上限，故本节只判「记录是否完整」，不判快慢",
+    "工单优秀(B)「模型对比+调参记录；服务异常处理(404/参数错)」: 对比模型 4 个（GBM/LR/RF/RF-tuned）｜GridSearch best_params={'max_depth': '4', 'n_estimators': '50'}｜异常分支逐条实测：探针 8 条全 通过，其中 400/404 类 6/6 条按契约返回（实到状态码 200/400/404）→ 本节实测项 通过｜未实测项：生产级 ASGI 服务的异常中间件（本项目用标准库 http.server，400/404 分支已逐条实测，见 docs/03 决策矩阵）",
+    "工单超优(A)「优秀+ONNX导出或版本对比实验；P7综合项目立项书」: 前置优秀档=通过｜ONNX 导出=不可得（离线无 skl2onnx，如实报告）｜版本对比实验：教师包 model_v1.joblib 与本轮 model_v1.joblib 在同一批 10 条特征上逐条比预测，一致 10 条（不一致行 无）→ 本节实测项 通过｜未实测项：P7 综合项目立项书（交付物在 P7 工程，不在本项目内，见 ../p77 与 docs/07）",
+    "档位口径说明 : 课堂阶梯（D 示例跑通 / C F1≥0.80 并保存 / B 对比+调参+联动 / A 三维评价）与工单四档（及格/良好/优秀/超优）字母不同源——课堂 C 层≈工单及格、课堂 B 层横跨工单良好与优秀，工单优秀的『服务异常处理(404/参数错)』与超优的『版本对比实验』只在本节取证；本节判「达标」仅限实测项，未实测项一律点名。"
   ],
-  "gate_passed": true
+  "runtime_files": {
+    "train_timing": "runtime/train_timing.json",
+    "note": "墙钟训练计时数值只存于该 runtime 路径文件，不写入 output/ 任何产物"
+  },
+  "manifest": {
+    "model_name": "model_v1.joblib",
+    "version_note": "model_v1.joblib：P6 五步流训练产物（划分→训练→CV→GridSearch→落盘）",
+    "estimator": "LR",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4",
+    "python": "3.12.11",
+    "trained_at_utc": "2026-10-27T21:10:58",
+    "data_source": "真实数据：P2.2 产物 features.npy（200×30）",
+    "n_features": 30,
+    "feature_names": [
+      "mean",
+      "std",
+      "max",
+      "ptp",
+      "rms",
+      "var",
+      "abs_mean",
+      "crest",
+      "kurtosis",
+      "clearance",
+      "skewness",
+      "cv",
+      "shape_factor",
+      "impulse_factor",
+      "zero_crossing_rate",
+      "dom_freq",
+      "f2",
+      "f3",
+      "spec_energy",
+      "spec_centroid",
+      "spec_var",
+      "bandwidth",
+      "half_power_bw",
+      "energy_ratio_0_20hz",
+      "spec_rolloff",
+      "rms_freq",
+      "spectral_flatness",
+      "spectral_skewness",
+      "spectral_kurtosis",
+      "entropy"
+    ],
+    "seed": 42,
+    "metrics": {
+      "test_macro_f1": 1.0,
+      "confusion_matrix": [
+        [
+          25,
+          0
+        ],
+        [
+          0,
+          25
+        ]
+      ],
+      "grid_best_params": {
+        "max_depth": "4",
+        "n_estimators": "50"
+      }
+    },
+    "gate_min_f1": 0.8,
+    "gate_passed": true
+  },
+  "teacher": {
+    "available": true,
+    "path": "model_v1.joblib",
+    "n_features": 30,
+    "classes": [
+      0,
+      1
+    ],
+    "load_warnings": [],
+    "local_sklearn": "1.9.1",
+    "tested_samples": 10,
+    "predictions": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "local_predictions": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "version_agreement": 10,
+    "version_diff_rows": [],
+    "version_compared": 10
+  },
+  "p5_link": {
+    "origin": "P5 真实仓库 ../p55_warehouse_orm/output/warehouse.db",
+    "diagnosed_records": 3,
+    "devices": [
+      {
+        "device": "DEV-01",
+        "area": "SMT车间A",
+        "record_id": 1436,
+        "window_used": 32,
+        "prediction": 1,
+        "proba_wear": 0.9997,
+        "label": "磨损"
+      },
+      {
+        "device": "DEV-02",
+        "area": "SMT车间B",
+        "record_id": 1432,
+        "window_used": 32,
+        "prediction": 1,
+        "proba_wear": 0.9997,
+        "label": "磨损"
+      },
+      {
+        "device": "DEV-03",
+        "area": "装配车间C",
+        "record_id": 1434,
+        "window_used": 32,
+        "prediction": 1,
+        "proba_wear": 0.9997,
+        "label": "磨损"
+      }
+    ],
+    "feature_order_check": {
+      "expected": 30,
+      "actual": 30,
+      "aligned": true,
+      "unique": true
+    },
+    "copy_db": "warehouse_diagnosis.db"
+  },
+  "bench": {
+    "n_requests": 100,
+    "warmup": 5,
+    "warmup_first_ms": 36.476,
+    "mean_ms": 0.914,
+    "p50_ms": 0.895,
+    "p95_ms": 1.06,
+    "p99_ms": 1.194,
+    "max_ms": 1.238,
+    "qps": 1093.9,
+    "client_timed": 100,
+    "requests_sent": 105,
+    "server_recorded": 105,
+    "records_match": true,
+    "note": "真实 HTTP 往返计时（本机临时端口，单并发顺序压测；验收口径看 p95 不看均值）",
+    "source": "首次运行/--bench 实测（进程内临时端口，端口留给 --serve）；其余运行读此缓存"
+  },
+  "onnx": {
+    "available": false,
+    "reason": "当前课程环境未安装 skl2onnx（离线不可装）：No module named 'skl2onnx'；导出路径已实现并由导入探测保护，装上后即可运行",
+    "planned_opset": 17
+  },
+  "service_contract": {
+    "endpoints": [
+      "GET /health（真推理一发）",
+      "POST /predict（JSON features 30维）"
+    ],
+    "errors": {
+      "400": "非JSON/缺features/维度不符/NaN",
+      "404": "未知路径"
+    },
+    "cli": "python run.py --serve （config port=8899）"
+  }
 }

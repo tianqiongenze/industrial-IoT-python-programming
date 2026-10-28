@@ -1,0 +1,114 @@
+{#- ============================================================================
+    P3.2 每日生产分析报告模板（四段式：概览 / 分析 / 异常 / 附表）
+    工程化要求 3：模板只管版式，一切计算在 Python 侧（core/report 已算好）。
+    渲染环境用 jinja2.StrictUndefined —— 变量名与上下文不一致会当场报错，
+    正是工单"避坑"条目所指"模板变量与 Python 命名不一致（静默空白）"的治法。
+    可用变量清单（与 report.build_context 的返回键一一对应）：
+      title date generated_at sections source provenance deps elapsed_seconds
+      budget_seconds kpi_names kpis overview analysis anomalies anomalies_total
+      trend_points trend_svg appendix
+   -#}
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} ｜ {{ date }}</title>
+  <style>
+    body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;margin:24px;color:#1a202c}
+    h1{font-size:20px;border-bottom:3px solid #2b6cb0;padding-bottom:6px}
+    h2{font-size:16px;margin-top:22px;color:#2b6cb0}
+    .meta{font-size:12px;color:#4a5568;line-height:1.7}
+    table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px}
+    th,td{border:1px solid #cbd5e0;padding:4px 6px;text-align:left}
+    th{background:#e6ecf5}
+    .cards{display:flex;flex-wrap:wrap;gap:10px}
+    .card{border:1px solid #cbd5e0;border-radius:8px;padding:8px 12px;min-width:150px}
+    .card b{display:block;font-size:11px;color:#718096;font-weight:normal}
+    .card span{font-size:20px;font-weight:bold}
+    .ok{color:#276749}.warn{color:#b7791f}.error{color:#c53030}
+    .pill{padding:1px 6px;border-radius:10px;font-size:11px;color:#fff}
+    .pill.ok{background:#276749}.pill.warn{background:#b7791f}.pill.error{background:#c53030}
+    footer{margin-top:24px;font-size:11px;color:#718096;border-top:1px dashed #cbd5e0}
+    @media (max-width:600px){body{margin:10px}.card span{font-size:16px}}
+  </style>
+</head>
+<body>
+  <h1>{{ title }} ｜ {{ date }}</h1>
+  <p class="meta">
+    生成时间：{{ generated_at }}<br>
+    数据源：{{ source }}<br>
+    KPI 口径（共 {{ kpis|length }} 项，工单点名 5 项优先）：{{ kpi_names|join("、") }}
+  </p>
+
+  <h2>一、{{ sections[0] }}</h2>
+  <div class="cards">
+    {% for k in kpis %}
+    <div class="card"><b>{{ k.name }}</b>
+      <span class="{{ k.tone }}">{{ k.text }}</span>
+      {% if k.delta %}<em class="{{ k.tone }}">（环比 {{ k.delta }}）</em>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <p class="meta">
+    全量记录 {{ overview.rows_total }} 行 ｜ 本报告窗口 {{ overview.rows_window }} 行 ｜
+    覆盖设备 {{ overview.devices }} 台 ｜ 合格合计 {{ overview.good }} ｜
+    窗口良率 {{ "%.2f"|format(overview.yield_pct) }}% ｜ 在线 {{ overview.online }} ｜
+    告警 {{ overview.alarms }} ｜ 效率对标 {{ overview.efficiency }}
+  </p>
+
+  <h2>二、{{ sections[1] }}</h2>
+  <p class="meta">产量趋势采样点 {{ trend_points }} 个（明细见下方折线与设备对比表）。</p>
+  {#- trend_svg 由 report.trend_svg() 用 %.1f 数值自生成（不含任何外部字符串），
+      故这里显式 | safe；不加过滤器会被 autoescape 转义成 &lt;svg…>，
+      日报"图文混排"会退化成一行 markup 文本（原缺陷，现由 ui_rubric 的图例项实测把关）。 -#}
+  {{ trend_svg | safe }}
+  <table>
+    <tr><th>设备</th><th>产线</th><th>产量</th><th>合格</th><th>良率%</th><th>告警</th><th>灯态</th></tr>
+    {% for r in analysis %}
+    <tr><td>{{ r.device_id }}</td><td>{{ r.line }}</td><td>{{ r.output }}</td>
+      <td>{{ r.ok_qty }}</td><td>{{ r.yield_pct }}</td><td>{{ r.alarms }}</td>
+      <td><span class="pill {{ r.tone }}">{{ r.light }}</span></td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>三、{{ sections[2] }}</h2>
+  <p class="meta">
+    超阈值记录共 {{ anomalies_total }} 条（温度 &gt; {{ thresholds_display.temp_max }}℃
+    或振动 &gt; {{ thresholds_display.vib_max }} mm/s），以下列前 {{ anomalies|length }} 条并附处置建议。
+  </p>
+  <table>
+    <tr><th>时间</th><th>设备</th><th>温度</th><th>振动</th><th>原因</th><th>处置建议</th></tr>
+    {% for a in anomalies %}
+    <tr><td>{{ a.ts }}</td><td>{{ a.device_id }}</td><td class="error">{{ a.temp }}</td>
+      <td class="error">{{ a.vib }}</td><td>{{ a.reasons }}</td><td>{{ a.suggestion }}</td></tr>
+    {% else %}
+    <tr><td colspan="6">本窗口无超阈值记录。</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>四、{{ sections[3] }}</h2>
+  <p class="meta">末 {{ appendix.rows|length }} 行明细，窗口共 {{ appendix_total }} 行（层数由 config/report.tail_rows 控制）。</p>
+  <table>
+    <tr>{% for c in appendix.columns %}<th>{{ c }}</th>{% endfor %}</tr>
+    {% for row in appendix.rows %}
+    <tr>{% for c in row %}<td>{{ c }}</td>{% endfor %}</tr>
+    {% endfor %}
+  </table>
+
+  <h2>附：列级出处与运行说明</h2>
+  <table>
+    <tr><th>列</th><th>出处</th></tr>
+    {% for col, whence in provenance %}
+    <tr><td>{{ col }}</td><td>{{ whence }}</td></tr>
+    {% endfor %}
+  </table>
+  <footer>
+    HTML 渲染路径：{{ deps.html_renderer }}<br>
+    可选依赖实况：{{ deps.summary }}<br>
+    交互仪表盘：{{ deps.dashboard }}<br>
+    日报生成耗时档位：{{ elapsed_text }}（精确值见 output/timing.txt；预算
+    {{ budget_seconds }}s，C 层要求 &lt; 2 分钟 → {{ "达标" if within_budget else "超时" }}）
+  </footer>
+</body>
+</html>

@@ -1,20 +1,65 @@
 ================================================================
-生成时间: 2026-10-19 18:29:59
+生成时间: 2026-10-28 05:06:32
 ================================================================
 
 [输入口径]
 ----------------------------------------------------------------
-项目 pump-ops｜依赖 numpy/pandas｜模板 6 个文件
+项目 pump-ops｜Python >=3.10｜运行依赖 2 条｜开发依赖 4 条｜闸门工具 black, flake8
+模板 15 个文件（表驱动）；生成到 skeleton；生成物按模板同步=是（同步=内容不一致才重写，一致则保留，故重复运行逐字节一致）
 
-[生成结果]
+[生成清单（文件盘点）]
 ----------------------------------------------------------------
-新建 0 个：
-已存在跳过 6 个
+.gitignore                       97 字节
+.pre-commit-config.yaml         507 字节
+README.md                       889 字节
+config/settings.yaml             54 字节
+pyproject.toml                  521 字节
+requirements-dev.txt            173 字节
+requirements.txt                 85 字节
+run.py                          272 字节
+scripts/git_dev_branch.sh       408 字节
+scripts/setup_venv.sh           407 字节
+src/__init__.py                  50 字节
+src/main.py                     241 字节
+src/utils.py                     96 字节
+tests/__init__.py                 0 字节
+tests/test_main.py              357 字节
+小计 15 个文件 / 4157 字节｜缺失 0 个
+
+[规范闸门环境探测（A 层：只探测，不执行任何检查工具）]
+----------------------------------------------------------------
+钩子声明 2 个：black, flake8
+black：钩子已声明=是，本机可导入=否
+flake8：钩子已声明=是，本机可导入=否
+本机可导入 1/7：pytest ｜ 缺失 6 个：black, flake8, isort, pre_commit, pylint, ruff
+执行状态：本次运行未调用 black/flake8/pylint/pre-commit 任何命令；钩子文件已生成，须 pre-commit install 后由 git 在 commit 前触发（当前环境缺工具，装上后同一份钩子即真正拦截）
+
+[工单验收四档对照（及格/良好/优秀/超优）]
+----------------------------------------------------------------
+档位口径说明：本节判的是工单《P1.2》验收标准四行原文，与上面「分层达标」的课堂四档（D 跟做 / C 基础 / B 标准 / A 进阶拓展）不同轴；两节各判各的、互不覆写。凡一档还有本机取不了证的子项（要真开 shell / 真联网 / 真触发 git 钩子），该行只写「本节取证项 通过」，绝不写「达标」。
+工单及格(D)「conda环境激活可用+仓库初始化+结构完整+README」: 结构完整=是（四目录 4/4、模板缺失 0、空目录 0、.pyc 0）｜README.md 已落盘 889 字节且首行为一级标题=是｜仓库初始化三连（git init / git add . / git commit -m）=是｜venv 激活命令写在 setup_venv.sh=是｜本流水线解释器位于 conda 环境目录=是 → 本节取证项 通过
+    未取证项（须课堂/CI 侧补跑）：conda activate 后 python -V 的课堂截图：本节只读出解释器确实在 conda 环境目录（/opt/anaconda3/envs/pp03/bin/python），不在 shell 里执行激活
+工单良好(C)「检查工具配置生效；pytest通过」: 检查工具配置：2 个钩子全部带 entry（2/2，black, flake8）｜配置要求的工具缺口 0 个｜pytest 配置 testpaths 已声明=是｜生成骨架真实加载：入口 main() 返回 0、自带 test_ 函数 3 个通过 3 个失败 0 个｜--fail-under 评分 entry 已声明=否 → 本节取证项 通过
+    未取证项（须课堂/CI 侧补跑）：pre-commit run --all-files 实跑（工具能否导入见「规范闸门环境探测」节）；用 pytest 命令行跑一遍生成骨架（本节只在进程内直接调用它自带的 test_ 函数）；pylint 评分截图（工单提交物要求 ≥8.5/10）：本次 lint_tools 未含 pylint，故 --fail-under=8.5 的 entry 未生成；把它加进 lint_tools 并在装有 pylint 的机器上运行即得该截图
+工单优秀(B)「依赖可还原（requirements完整）；dev分支规范合并」: 运行依赖 2/2 条钉下限｜开发依赖 4/4 条钉下限｜-r 引用 requirements.txt=是｜与运行依赖重名的开发项 0 个（无）｜git branch dev=是、git checkout dev=是、--no-ff 合并=是 → 本节取证项 通过
+    未取证项（须课堂/CI 侧补跑）：pip install -r requirements.txt 实装（课程解释器离线，不联网）；在真实 git 仓库里跑一次 dev → main 的 --no-ff 合并
+工单超优(A)「优秀+GitHub Actions CI或pre-commit钩子」: pre-commit 钩子文件已产出=是（声明 2 个：black, flake8）｜.github/workflows 下 CI 文件 0 个｜工单优秀(B) 档前置=成立 → 本节取证项 通过
+    未取证项（须课堂/CI 侧补跑）：GitHub Actions CI 未产出（工单原文是『CI 或 pre-commit 钩子』，本项目取后一支）；pre-commit install 后由 git 在 commit 前真拦截
+
+[分层达标]
+----------------------------------------------------------------
+D层 跟做跑通: 模板 15 个文件已落盘（共 4157 字节）｜[project.scripts] 入口解析 1/1｜四目录齐备 4/4｜自检 missing=0 empty_dirs=0 junk=0 → 通过
+C层 venv+仓库: setup_venv.sh 含 python -m venv venv=是、pip install -r requirements.txt=是、git init=是｜.gitignore 屏蔽 venv/=是 → 达标
+B层 依赖可还原+dev分支: 运行依赖 2/2 条钉版本下限｜开发依赖 4/4 条钉下限，-r 引用 requirements.txt=是｜git_dev_branch.sh 含 git branch dev=是、git checkout dev=是、--no-ff 合并=是 → 达标
+A层 pre-commit 闸门: .pre-commit-config.yaml 声明钩子 2 个（black, flake8）｜配置要求工具 2 个，缺钩子 0 个｜本机可导入闸门工具 0/2 → 闸门文件 达标；未安装的工具本次未运行（不谎报）
 
 [自检]
 ----------------------------------------------------------------
-missing=0 empty_dirs=0 junk=0
+missing=0 empty_dirs=0 junk=0 unexpected=0
 
 [结论与建议]
 ----------------------------------------------------------------
-骨架自检 通过；新人第一天就在规范结构里写代码
+四层达标 D/C/B/A：D=是、C=是、B=是、A=是
+工单四档取证项 4/4 通过：D=取证项通过、C=取证项通过、B=取证项通过、A=取证项通过｜未取证子项合计 8 条（逐条点名见对照节）
+新人第一天即得到可运行、可还原依赖、带钩子文件与分支脚本的工程骨架；课堂按 docs/05 逐条执行 scripts/ 内命令并截图进工单。
+若要把 A 层从『闸门文件已就位』升级成『提交真被拦截』：pip install -r requirements-dev.txt && pre-commit install（本机缺 black, flake8, isort, pre_commit, pylint, ruff）

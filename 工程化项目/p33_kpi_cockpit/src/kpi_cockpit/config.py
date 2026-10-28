@@ -13,6 +13,10 @@ DEFAULTS: Dict[str, Any] = {
     "warn": 80.0, "danger": 95.0, "unit": "c", "seed": 7, "topk": 2,
 }
 
+# 缺失即显式告警的必需配置段（工程化要求 1：KPI/阈值/目标全部外置，不许硬编码兜底）
+REQUIRED_SECTIONS = ("kpi", "thresholds", "targets", "data", "report",
+                     "schedule", "cache")
+
 
 def _scalar(v):
     v = v.strip()
@@ -110,15 +114,23 @@ class Settings:
     topk: int = 2
     items: List[Any] = field(default_factory=list)
     raw: Dict[str, Any] = field(default_factory=dict)
+    missing_sections: List[str] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, d):
         if not isinstance(d, dict):
             d = {}
+        missing = [s for s in REQUIRED_SECTIONS if s not in d]
         d = dict(DEFAULTS, **d)
+        warn, danger = float(d["warn"]), float(d["danger"])
+        if warn >= danger:                      # docs/03 异常策略：启动即拒绝
+            raise ValueError("阈值顺序颠倒：warn=%.1f 必须小于 danger=%.1f"
+                             % (warn, danger))
         items = d.get("items")
         if not items:
-            # 数据集键名不限 items：devices / raw_lines / fleet / readings / corpus ...
+            # 数据集键名：优先显式 lines，其次 items，再退化为首个 list 值
+            items = d.get("lines")
+        if not items:
             for k, v in d.items():
                 if isinstance(v, list) and v and isinstance(v[0], (dict, str, int, float)):
                     items = v
@@ -128,20 +140,112 @@ class Settings:
         if not isinstance(items, list):
             items = [items]
         return cls(
-            warn=float(d["warn"]), danger=float(d["danger"]), unit=str(d["unit"]),
+            warn=warn, danger=danger, unit=str(d["unit"]),
             seed=int(d["seed"]), topk=int(d["topk"]),
-            items=items, raw=d,
+            items=items, raw=d, missing_sections=missing,
         )
 
+    # ---- 结构化取数（pipeline/app 统一走这里，杜绝散落硬编码）----
+    def section(self, name):
+        """取一段配置；缺失 → KeyError（不静默给默认值，防"静默空白"）。"""
+        if name not in self.raw:
+            raise KeyError("config/rules.yaml 缺少必需段: %s" % name)
+        return self.raw[name]
 
-def load_config(path):
-    if not os.path.exists(path):
-        raise FileNotFoundError("配置文件不存在: %s" % path)
-    text = open(path, encoding="utf-8").read()
-    data = None
+    def path(self, dotted, default=None):
+        """按 'a.b.c' 取嵌套值；取不到返回 default（仅供可选键使用）。"""
+        cur = self.raw
+        for p in dotted.split("."):
+            if not isinstance(cur, dict) or p not in cur:
+                return default
+            cur = cur[p]
+        return cur
+
+    def require(self, dotted):
+        """按 'a.b.c' 取嵌套值；取不到抛 KeyError（必需键走这条，避免静默降级）。"""
+        sentinel = object()
+        out = self.path(dotted, sentinel)
+        if out is sentinel:
+            raise KeyError("config/rules.yaml 缺少必需键: %s" % dotted)
+        return out
+
+    # ---- 常用口径的语义化别名（单一真源：都从 YAML 读）----
+    @property
+    def temp_max(self):
+        return float(self.require("thresholds.temp_max"))
+
+    @property
+    def vib_max(self):
+        return float(self.require("thresholds.vib_max"))
+
+    @property
+    def target_output_per_day(self):
+        return float(self.require("targets.output_qty_per_day"))
+
+    @property
+    def report_seconds_max(self):
+        return float(self.require("targets.report_seconds_max"))
+
+    @property
+    def kpi_required(self):
+        return list(self.require("kpi.required"))
+
+    @property
+    def kpi_extra(self):
+        return list(self.section("kpi").get("extra") or [])
+
+    @property
+    def unit_symbol(self):
+        """config 的 unit 键 → 显示符号（杜绝代码里硬编码 ℃）。"""
+        return {"c": "℃", "f": "℉", "k": "K"}.get(str(self.unit).lower(), str(self.unit))
+
+    @property
+    def cache_ttl(self):
+        return int(self.require("cache.ttl_seconds"))
+
+    @property
+    def drill_max_rows(self):
+        """联动明细行数上限（工单优秀(B) 钻取；drill.max_rows，缺失即报错不静默给默认）。"""
+        return int(self.require("drill.max_rows"))
+
+    @property
+    def drill_detail_columns(self):
+        """联动明细列清单（工单优秀(B) 钻取；drill.detail_columns）。"""
+        return [str(c) for c in self.require("drill.detail_columns")]
+
+    def rules(self):
+        """把 YAML 组装成 core.* 统一消费的"扁平规则包"（配置→逻辑唯一通道）。"""
+        return {
+            "temp_max": self.temp_max, "vib_max": self.vib_max,
+            "status_online": self.require("thresholds.status_online"),
+            "output_qty_per_day": self.target_output_per_day,
+            "warn": self.warn, "danger": self.danger,
+            "kpi_required": self.kpi_required, "kpi_extra": self.kpi_extra,
+            "unit_symbol": self.unit_symbol,
+            "drill_max_rows": self.drill_max_rows,
+            "drill_detail_columns": self.drill_detail_columns,
+        }
+
+
+def parse(text):
+    """YAML 文本 → dict：有 PyYAML 用之，无则降级内置 yaml_lite（课堂任意机器可跑）。"""
     try:
         import yaml
         data = yaml.safe_load(text)
     except ImportError:
         data = yaml_lite(text)
-    return Settings.from_dict(data)
+    return data if isinstance(data, dict) else {}
+
+
+def load_config(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError("配置文件不存在: %s" % path)
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    cfg = Settings.from_dict(parse(text))
+    if cfg.missing_sections:                    # 显式告警，不静默吞掉
+        import logging
+        logging.getLogger("kpi_cockpit").warning(
+            "config/rules.yaml 缺少段 %s，相关功能将按 DEFAULTS 运行",
+            ",".join(cfg.missing_sections))
+    return cfg

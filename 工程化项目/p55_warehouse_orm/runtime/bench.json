@@ -1,0 +1,56 @@
+{
+  "index_bench": {
+    "bench_rows": 20000,
+    "reps": 7,
+    "hits": 240,
+    "before_ms": 1.2958,
+    "after_ms": 0.0894,
+    "speedup_x": 14.5,
+    "before_plan": [
+      "SCAN bench_records"
+    ],
+    "after_plan": [
+      "SEARCH bench_records USING COVERING INDEX idx_bench_dev_ts (point_id=? AND ts>? AND ts<?)"
+    ],
+    "scan_before": true,
+    "index_search_after": true,
+    "note": "实测 1.296 ms → 0.089 ms（提速 14.5x）",
+    "production_index": "records 表 idx_dev_ts(point_id, ts) 由 ORM __table_args__ 声明；基准在等结构副本表 bench_records 上做大样本实测以免污染业务表"
+  },
+  "slow_queries": [
+    {
+      "name": "全表聚合：按小时统计记录数",
+      "ms": 1.425,
+      "plan": [
+        "SCAN records USING COVERING INDEX idx_dev_ts",
+        "USE TEMP B-TREE FOR GROUP BY"
+      ]
+    },
+    {
+      "name": "三表JOIN：各设备平均vib",
+      "ms": 0.351,
+      "plan": [
+        "SCAN p",
+        "SEARCH d USING INTEGER PRIMARY KEY (rowid=?)",
+        "SEARCH r USING INDEX idx_dev_ts (point_id=?)",
+        "USE TEMP B-TREE FOR GROUP BY"
+      ]
+    },
+    {
+      "name": "无最左前缀：仅按 ts 范围查（idx_dev_ts 不生效→教学案例）",
+      "ms": 0.227,
+      "plan": [
+        "SCAN records USING COVERING INDEX idx_dev_ts"
+      ]
+    }
+  ],
+  "params": {
+    "rows": 20000,
+    "reps": 7,
+    "seed": 7,
+    "topk": 3
+  },
+  "unit": "ms",
+  "source": "首次运行/--index-bench/参数变更后实测；其余运行读此缓存",
+  "note": "墙钟实测毫秒只写本文件（runtime/bench.json），禁止进入 output/——verify_local 的 repeat 闸门逐字节比对 output/"
+}

@@ -1,0 +1,3 @@
+db_path: data/warehouse.db
+poll_interval: 0.5
+unit: c

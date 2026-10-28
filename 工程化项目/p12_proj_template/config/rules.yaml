@@ -1,10 +1,34 @@
+# 工单 03-P1.2《标准 Python 工程模板》—— 规则外置（改配置不改代码）
+# 分层达标口径：D 学徒跟做跑通 / C 操作员 venv+仓库+结构 / B 组长 依赖可还原+dev分支 / A 师傅 pre-commit 闸门
 warn: 80.0
 danger: 95.0
-project_name: pump-ops
-python_version: ">=3.10"
-deps:
-  - numpy
-  - pandas
 unit: "c"
 seed: 7
 topk: 3
+
+# 模板生成参数（真源在此，src/proj_template/pipeline.py 只读取不硬编码）
+project_name: pump-ops
+python_version: ">=3.10"
+
+# B 层：运行依赖 —— 每行必须钉版本下限（>= 或 ==），否则 B 层闸门判未达标
+deps:
+  - numpy>=1.21
+  - pandas>=1.5
+
+# B 层：开发依赖 —— 写入生成项目的 requirements-dev.txt（该文件首行 -r requirements.txt 由模板固定）
+dev_deps:
+  - pytest>=8.0
+  - black>=23.0
+  - flake8>=6.0
+  - pre-commit>=3.0
+
+# A 层：pre-commit 钩子要声明的工具（同时也是环境探测对象）；置空列表 → A 层判未达标
+lint_tools:
+  - black
+  - flake8
+
+# A 层：emit_pre_commit: false 即不生成 .pre-commit-config.yaml（A 层闸门随之翻转）
+emit_pre_commit: true
+
+# 生成树归模板所有：true=内容不一致才重写（保证重复运行逐字节一致），false=已存在即跳过
+overwrite_existing: true

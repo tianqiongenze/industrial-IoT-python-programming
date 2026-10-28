@@ -1,0 +1,8 @@
+[0加载] 1206 行, 列=['device_id', 'ts', 'temp', 'press', 'status']
+[0检查] temp缺失 55 + 非法串0, press缺失 0, ts缺失 0
+[3转型] temp→float, ts→datetime(3格式合并), 无法解析时间 0 条
+[2缺失] temp按设备插值+行dropna: 1206→1206 行, 剩余缺失 0
+[4异常] IQR[26.4,104.0]命中 14 | 业务阈值(temp>120或press越界)命中 14 | 并集剔除 14
+[5去重] subset=['device_id','ts'] keep=first: 1192→1186 行, 删 6
+[6验证] temp∈[20,120]=True press∈[0.1,1.0]=True 时间有序=True dtype ts=datetime64[us]
+[7输出] clean.csv 1186 行 (清洗率 1.7%) + 本日志共 8 条

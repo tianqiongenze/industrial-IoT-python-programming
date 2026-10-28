@@ -1,0 +1,1 @@
+定时状态：目标 07:30｜下次触发 2026-10-28 07:30:00｜距此刻 8468s｜演示裁剪等待 5.0s｜计划任务产物 runtime/schedule/（crontab/systemd/launchd/mailto 共 4 件）

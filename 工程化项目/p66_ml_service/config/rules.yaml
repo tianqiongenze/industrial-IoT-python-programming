@@ -1,9 +1,30 @@
-warn: 80.0
-danger: 95.0
-n_samples: 600
-test_size: 0.25
-min_f1: 0.80
-port: 8899
-unit: "c"
+# P6 故障诊断模型与边缘部署 —— 运行配置（改配置不改代码；每个键都在代码中被读取）
+# 数据链路：P2.2 特征产物 → 训练 → 门禁 → model_v1.joblib → P5 库联动 → HTTP 服务
+# 说明：注释一律整行（内置 yaml_lite 兜底解析器不处理行尾注释）
+features_path: ../../features.npy
+labels_path: ../../labels.npy
+teacher_model: ../../model_v1.joblib
+p5_db: ../p55_warehouse_orm/output/warehouse.db
+model_name: model_v1.joblib
+n_features: 30
+n_fallback: 200
 seed: 42
-topk: 3
+test_size: 0.25
+cv_folds: 5
+min_f1: 0.80
+grid_n_estimators: [50, 100, 200]
+grid_max_depth: [4, 6, null]
+port: 8899
+host: "127.0.0.1"
+bench_requests: 100
+warmup: 5
+window_size: 32
+teacher_samples: 10
+explain_topk: 3
+
+# 工单《P6 验收标准》四档的可翻红旋钮（判定权在配置，不在代码文案）：
+# min_latency_records = 良好(C)「延迟记录完整」要求的最少计时条数；
+# error_probes = 优秀(B)「服务异常处理(404/参数错)」实际要打的状态码探针清单，
+#   名字取自 src/ml_service/service.py 的 ERROR_PROBES，少配一条即判未通过。
+min_latency_records: 50
+error_probes: [health_get, predict_ok, predict_non_json, predict_missing_features, predict_wrong_dim, predict_nan, unknown_get, unknown_post]

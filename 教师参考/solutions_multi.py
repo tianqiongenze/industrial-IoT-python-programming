@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """PP课程教师版·多解法参考（每题2-3解，全部可运行、结果互验）
-运行: /opt/anaconda3/bin/python solutions_multi.py   → 全部 PASS 才算数
+运行: cd 03-Python程序设计-项目实战 && /usr/local/bin/python3.11 教师参考/solutions_multi.py
+     （沙箱环境用 /opt/anaconda3/bin/python）→ 22 项全部 ✓ 才算数；退出码非 0 即有解法不一致。
 教学用法: 课堂上先展示解A(直白)再展示解B/C(工程化/新语法)，
          让学生说"什么场景选哪个"——这就是六步法'决策'环节的素材。
 P6服务两解(方案A http.server / 方案B Litestar+Granian)见 学生代码框架/W08_ml_service.py；
@@ -9,6 +10,7 @@ P7多模存储两解(Redis / diskcache)见 教师参考/p77_smart_ops/stores/kv.
 import math
 import random
 import sqlite3
+import sys
 
 RESULTS = []
 
@@ -133,23 +135,55 @@ def p5_a():              # 解A：原生SQL（DBA视角/复杂报表）
 
 
 def p5_b():              # 解B：SQLAlchemy ORM（类型安全/可迁移PostgreSQL）
-    from sqlalchemy import create_engine, func, select
-    from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
+    """同一句分组聚合，2.0 与 1.3 两代声明式口径都能跑（requirements.lock=2.0，老环境=1.3）。"""
+    from sqlalchemy import create_engine, func
 
-    class B(DeclarativeBase):
-        pass
+    try:                                            # ── SQLAlchemy 2.0 口径 ──
+        from sqlalchemy import select
+        from sqlalchemy.orm import (DeclarativeBase, Mapped,  # noqa: F401
+                                    mapped_column, Session)
 
-    class Dev(B):
-        __tablename__ = "devices"
-        code: Mapped[str] = mapped_column(primary_key=True)
-        line: Mapped[str]
-        vib: Mapped[float]
+        class Base(DeclarativeBase):
+            pass
 
-    eng = create_engine("sqlite://", creator=_mkdb)
-    with Session(eng) as s:
-        rows = s.execute(select(Dev.line, func.round(func.avg(Dev.vib), 2))
-                         .group_by(Dev.line)).all()
-    return dict(rows)
+        class Dev(Base):
+            __tablename__ = "devices"
+            code: Mapped[str] = mapped_column(primary_key=True)
+            line: Mapped[str]
+            vib: Mapped[float]
+
+        def agg(engine):
+            with Session(engine) as s:
+                return dict(s.execute(
+                    select(Dev.line, func.round(func.avg(Dev.vib), 2))
+                    .group_by(Dev.line)).all())
+
+        style = "2.0 DeclarativeBase+select"
+    except ImportError:                           # ── SQLAlchemy 1.3 口径 ──
+        from sqlalchemy import Column, Float, String
+        from sqlalchemy.ext.declarative import declarative_base
+
+        Base = declarative_base()
+
+        class Dev(Base):
+            __tablename__ = "devices"
+            code = Column(String, primary_key=True)
+            line = Column(String)
+            vib = Column(Float)
+
+        def agg(engine):
+            from sqlalchemy.orm import sessionmaker
+            s = sessionmaker(bind=engine)()
+            try:
+                return dict(s.query(Dev.line, func.round(func.avg(Dev.vib), 2))
+                            .group_by(Dev.line).all())
+            finally:
+                s.close()
+
+        style = "1.3 declarative_base+Query"
+
+    print(f"    [ORM口径] {style}")
+    return agg(create_engine("sqlite://", creator=_mkdb))
 
 
 def p5_c():              # 解C：pandas.read_sql（要接着做可视化/透视）
@@ -262,3 +296,4 @@ if __name__ == "__main__":
     check("P6 部署 A=B预测一致", lambda: W08_a() == W08_b(), True)
     bad = [n for n, ok in RESULTS if not ok]
     print(f"\n{len(RESULTS)}项解法互验：{'ALL PASS ✅' if not bad else 'FAIL ❌ ' + str(bad)}")
+    sys.exit(1 if bad else 0)                         # 供自检/阅卷脚本判定退出码

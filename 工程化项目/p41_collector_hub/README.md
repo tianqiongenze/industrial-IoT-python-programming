@@ -6,27 +6,30 @@
 
 ## 一、30 秒跑起来
 ```bash
-cd W06_collector_hub
-python run.py                 # 输出到 output/ 并打印摘要
-python -m pytest -q           # 全量测试（应全绿）
+cd 工程化项目/p41_collector_hub
+python run.py                 # 输出到 output/ 并打印「结论与建议」摘要
+python -m pytest -q           # 全量测试（47 例 / 4 文件，应全绿）
 ```
 
 ## 二、目录结构
 ```
-W06_collector_hub/
-├── run.py                  # 唯一入口（argparse CLI）
-├── pyproject.toml          # 包元数据 + pytest 配置
-├── requirements.txt        # 依赖清单
-├── config/rules.yaml       # 规则外置：改配置不改代码
+p41_collector_hub/
+├── run.py                  # 唯一入口（薄壳：注入 sys.path 后调用 collector_hub.cli.main）
+├── pyproject.toml          # 包元数据 + [project.scripts] + pytest 配置
+├── requirements.txt        # 依赖清单（仅标准库）
+├── config/rules.yaml       # 规则外置：改配置不改代码（sources 与 faults 两张清单）
 ├── src/collector_hub/
 │   ├── config.py           # YAML 加载 + Settings（含 yaml_lite 兜底）
-│   ├── core.py             # 纯函数领域逻辑（零 IO，可单测）
+│   ├── core.py             # 纯函数领域逻辑（零 IO：重连/退避/采集/还原/对账/计数自洽）
 │   ├── io_utils.py         # CSV/JSON/原子写
 │   ├── report.py           # 报告渲染
-│   └── pipeline.py         # load → process → evaluate → report
+│   ├── pipeline.py         # 同一份故障跑三条链路 → 还原/对账 → 工单四档 + 分层达标 → 落盘
+│   └── cli.py              # 命令行入口（--config/--outdir/--quiet），与 console script 共用
 ├── tests/
-│   ├── test_core.py        # 正常/边界/异常三档
-│   └── test_config.py      # 配置加载与校验
+│   ├── test_core.py        # 19 例：正常/边界/异常三档（重连、退避、丢弃计数、采集率、自洽）
+│   ├── test_workorder_rows.py # 11 例：工单四档（及格/良好/优秀/超优）逐档实测取证 + 行首原文对表课程仓工单 md
+│   ├── test_tier_gates.py  # 8 例：D/C/B/A 分层闸门真数字证据（改配置可当场判不达标）
+│   └── test_config.py      # 9 例：配置加载、零依赖兜底解析、三源+故障清单、手册与配置逐字对齐
 └── docs/                   # 01~08 全套过程文档（见下）
 ```
 
@@ -50,6 +53,12 @@ W06_collector_hub/
 | ③ **工程化项目（本目录）** | `../工程化项目/` | **企业级工程结构 + 全套流程资料** |
 
 ## 五、验收口径
-- `python -m pytest -q` 全绿；`python run.py` 生成 `output/report.txt`
-- 配置修改不需改代码；二次运行结果一致（种子固定）
+- `python -m pytest -q` 全绿（47 passed / 4 文件）；`python run.py` 生成 `output/report.txt`（八节）与 `output/result.json`
+- 配置修改不需改代码；二次运行结果一致（读数由 crc32 确定性生成、计数由配置推导，除报告首行时间戳外逐字节一致）
+- 断线重连实测收益：同一份故障注入下，采集率由不重连的 91.67%（丢 3）提升到 97.22%（丢 1、重连 7 次）；
+  计数自洽 35+1=36、43=35+1+7
+- 工单四档逐档取证：报告「工单验收四档对照」每档行首逐字引用 `pipeline.WO_ROW`（单源常量），
+  `tests/test_workorder_rows.py` 拿它直接对表课程仓 `工单任务书/P4工单-多源工业数据采集系统.md`；
+  课堂阶梯（D/C/B/A）与工单阶梯（及格/良好/优秀/超优）字母不同源，报告用「档位口径说明」写明，
+  工单优秀(B)（≥99.5%＋延迟<100ms＋线程安全）用零丢弃链路 + `core.py` AST 扫描单独取证
 - 过程文档 8 份齐全，可直接用于期末答辩的材料链

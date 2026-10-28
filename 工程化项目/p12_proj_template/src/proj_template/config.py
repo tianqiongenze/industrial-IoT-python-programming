@@ -11,6 +11,11 @@ from typing import Any, Dict, List
 
 DEFAULTS: Dict[str, Any] = {
     "warn": 80.0, "danger": 95.0, "unit": "c", "seed": 7, "topk": 2,
+    # 以下为模板生成参数（真源在 config/rules.yaml，这里只做缺省兜底）
+    "project_name": "pump-ops", "python_version": ">=3.10", "deps": [],
+    "dev_deps": ["pytest>=8.0", "black>=23.0", "flake8>=6.0", "pre-commit>=3.0"],
+    "lint_tools": ["black", "flake8"], "emit_pre_commit": True,
+    "overwrite_existing": True,
 }
 
 

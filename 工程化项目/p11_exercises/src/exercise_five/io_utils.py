@@ -13,6 +13,7 @@ import tempfile
 
 
 def ensure_dir(path):
+    """确保目录存在（幂等），返回该路径。"""
     os.makedirs(path, exist_ok=True)
     return path
 
@@ -33,10 +34,27 @@ def write_text(path, text, encoding="utf-8"):
 
 
 def write_json(path, obj):
+    """JSON 原子写（utf-8、不转义中文）。"""
     return write_text(path, json.dumps(obj, ensure_ascii=False, indent=2))
 
 
+def write_bytes(path, payload):
+    """原子写二进制（题5 坏编码样例文件用；同样防半成品文件）。"""
+    ensure_dir(os.path.dirname(os.path.abspath(path)))
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(os.path.abspath(path)),
+                               suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(payload)
+        os.replace(tmp, path)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+    return path
+
+
 def read_json(path):
+    """读 JSON 文件并反序列化。"""
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
@@ -48,6 +66,7 @@ def read_csv_rows(path):
 
 
 def write_csv_rows(path, rows, fields=None):
+    """写 CSV：无数据时只落空文件（不报错）。"""
     if not rows:
         return write_text(path, "")
     fields = fields or list(rows[0].keys())

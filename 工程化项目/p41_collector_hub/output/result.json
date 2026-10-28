@@ -1,23 +1,145 @@
 {
   "sources": {
     "PLC1": 12,
-    "PLC2": 12
+    "PLC2": 12,
+    "PLC3": 11
   },
   "per_source": {
     "PLC1": {
       "n": 12,
-      "sum": 301.2,
-      "mean": 25.1
+      "sum": 302.4,
+      "mean": 25.2,
+      "apm": {
+        "planned": 12,
+        "ok": 12,
+        "drop": 0,
+        "retry": 0,
+        "calls": 12,
+        "backoff_ms": 0.0,
+        "max_wait_ms": 0.0,
+        "latency_ms": 144.0,
+        "rate": 100.0,
+        "avg_ms": 12.0
+      }
     },
     "PLC2": {
       "n": 12,
-      "sum": 3060.0,
-      "mean": 255.0
+      "sum": 3036.0,
+      "mean": 253.0,
+      "apm": {
+        "planned": 12,
+        "ok": 12,
+        "drop": 0,
+        "retry": 4,
+        "calls": 16,
+        "backoff_ms": 60.0,
+        "max_wait_ms": 30.0,
+        "latency_ms": 188.0,
+        "rate": 100.0,
+        "avg_ms": 15.6667
+      }
+    },
+    "PLC3": {
+      "n": 11,
+      "sum": 27.5,
+      "mean": 2.5,
+      "apm": {
+        "planned": 12,
+        "ok": 11,
+        "drop": 1,
+        "retry": 3,
+        "calls": 15,
+        "backoff_ms": 70.0,
+        "max_wait_ms": 70.0,
+        "latency_ms": 370.0,
+        "rate": 91.6667,
+        "avg_ms": 30.8333
+      }
     }
   },
   "reconcile": {
     "ok": true,
     "diff": 0.0
   },
-  "n_total": 24
+  "n_total": 35,
+  "planned": 36,
+  "injected_faults": 3,
+  "apm": {
+    "planned": 36,
+    "ok": 35,
+    "drop": 1,
+    "retry": 7,
+    "calls": 43,
+    "backoff_ms": 130.0,
+    "max_wait_ms": 70.0,
+    "latency_ms": 702.0,
+    "rate": 97.2222,
+    "avg_ms": 19.5
+  },
+  "apm_no_retry": {
+    "planned": 36,
+    "ok": 33,
+    "drop": 3,
+    "retry": 0,
+    "calls": 36,
+    "backoff_ms": 0.0,
+    "max_wait_ms": 0.0,
+    "latency_ms": 480.0,
+    "rate": 91.6667,
+    "avg_ms": 13.3333
+  },
+  "collection_rate": 97.2222,
+  "rate_no_retry": 91.6667,
+  "rate_target": 95.0,
+  "identities": {
+    "ok+drop==planned": true,
+    "calls==ok+drop+retry": true
+  },
+  "tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "workorder_tiers": {
+    "D": true,
+    "C": true,
+    "B": true,
+    "A": true
+  },
+  "workorder_evidence": {
+    "docs_md": 8,
+    "shared_mutable_globals": [],
+    "zero_link": {
+      "retry_limit": 4,
+      "rate": 100.0,
+      "drop": 0,
+      "avg_ms": 22.2778
+    },
+    "rate_pass_line": 95.0,
+    "rate_strict_target": 99.5,
+    "latency_target_ms": 100.0
+  },
+  "config_echo": {
+    "batch_size": 3,
+    "poll_rounds": 4,
+    "backoff_base": 0.01,
+    "retry_limit": 3,
+    "rate_target": 95.0,
+    "faults": {
+      "PLC2": {
+        "slots": [
+          4,
+          7
+        ],
+        "fail_attempts": 2
+      },
+      "PLC3": {
+        "slots": [
+          3
+        ],
+        "fail_attempts": 4
+      }
+    }
+  }
 }

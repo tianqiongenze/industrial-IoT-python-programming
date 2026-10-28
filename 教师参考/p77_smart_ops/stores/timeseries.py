@@ -8,6 +8,8 @@
 
 单独运行: /opt/anaconda3/bin/python -m stores.timeseries
 """
+import os
+
 import duckdb
 
 from config import DUCK_FILE
@@ -19,9 +21,14 @@ CREATE OR REPLACE TABLE vib(
 
 
 def seed(n_per_device=3600 * 2):
-    """两台设备×2小时×10Hz级采样（合成：PUMP-03 后半程振动爬升）"""
+    """两台设备×2小时×1秒级采样（合成：PUMP-03 后半程振动爬升）
+
+    注意 `setseed()`：DuckDB 的 random() 默认每次不同——播种前定种子，
+    两次运行的窗口特征才可比（否则 F1/概率抖动，验收无法复现）。
+    """
     con = duckdb.connect(DUCK_FILE)
     con.execute(TABLE)
+    con.execute("SELECT setseed(0.42)")
     con.execute("""
     INSERT INTO vib
     SELECT TIMESTAMP '2026-09-09 08:00:00' + (i * INTERVAL 1 SECOND),
@@ -35,20 +42,34 @@ def seed(n_per_device=3600 * 2):
 
 
 def window_feats(device: str, minutes: int = 10) -> dict:
-    """最近N分钟的时序特征（模型推理的实时特征源）"""
+    """最近N分钟的时序特征（模型推理的实时特征源）
+
+    工单点位 P7-2 答案要点：先取 max(ts) 作窗口右端点，再一条 SQL 出
+    n/avg/max/首末差(slope)/last；命名参数 $dev/$cut/$mins 防注入。
+    slope 为教学口径 = avg(vib_rms) - 窗口最早值（min_by），非回归斜率。
+    空窗口边界（设备无采样/设备不存在）返回 samples=0 的零值字典——
+    否则 avg=None 进 round() 直接 TypeError，接口 /api/device/{未知码} 崩 500。
+    """
     con = duckdb.connect(DUCK_FILE, read_only=True)
     mx = con.execute("SELECT max(ts) FROM vib WHERE device = $dev",
                      {"dev": device}).fetchone()[0]
+    if mx is None:                         # 空输入边界：显式零值而非 None 传播
+        con.close()
+        return {"samples": 0, "avg_vib": 0.0, "max_vib": 0.0, "slope": 0.0,
+                "last_vib": 0.0, "note": f"设备{device}无采样数据"}
     row = con.execute("""
         SELECT count(*) n, avg(vib_rms) avg_v, max(vib_rms) max_v,
                avg(vib_rms) - min_by(vib_rms, ts) slope,
                last(vib_rms ORDER BY ts) last_v
         FROM vib
         WHERE device = $dev AND ts > $cut - to_minutes($mins)
-    """, {"dev": device, "cut": mx, "mins": minutes}).fetchone()
+    """, {"dev": device, "cut": mx, "mins": max(int(minutes), 1)}).fetchone()
     con.close()
     n, avg_v, max_v, slope, last_v = row
-    return {"samples": n, "avg_vib": round(avg_v, 3), "max_vib": round(max_v, 3),
+    if not n:
+        return {"samples": 0, "avg_vib": 0.0, "max_vib": 0.0, "slope": 0.0,
+                "last_vib": 0.0, "note": f"最近{minutes}分钟窗口内无采样"}
+    return {"samples": int(n), "avg_vib": round(avg_v, 3), "max_vib": round(max_v, 3),
             "slope": round(slope, 4), "last_vib": round(last_v, 3)}
 
 

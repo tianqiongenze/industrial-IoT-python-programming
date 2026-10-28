@@ -1,0 +1,9 @@
+[Unit]
+Description=p33_kpi_cockpit 自动日报（P3 超优(A) 层）
+
+[Timer]
+OnCalendar=*-*-* 07:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

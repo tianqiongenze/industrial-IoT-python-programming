@@ -1,36 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""项目唯一入口。
+"""项目唯一入口 —— P3《产线KPI仪表盘与自动日报》。
 
-用法:
-  python run.py                 # 按默认配置跑完整流水线并输出报告
-  python run.py --config x.yaml # 指定配置文件
-  python run.py --outdir out/   # 指定输出目录
-  python run.py --quiet         # 只输出到文件，不打印到控制台
+所有工单条目都能从这里到达（标志 ↔ 工单条目对照见 python run.py --help，
+详表见 docs/05 运行手册）。参数解析与流水线编排在 kpi_cockpit.cli，
+与 pyproject [project.scripts] 的 p33_kpi_cockpit 入口共用同一份实现。
 """
-import argparse
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "src"))
 
-import kpi_cockpit.config as C  # noqa: E402  （sys.path 注入后方可导入，属 src 布局必需）
-import kpi_cockpit.pipeline as P  # noqa: E402
-
-
-def main(argv=None):
-    ap = argparse.ArgumentParser(description="KPI 驾驶舱")
-    ap.add_argument("--config", default=os.path.join(HERE, "config", "rules.yaml"))
-    ap.add_argument("--outdir", default=os.path.join(HERE, "output"))
-    ap.add_argument("--quiet", action="store_true")
-    a = ap.parse_args(argv)
-    cfg = C.load_config(a.config)
-    sections = P.run(cfg, out_dir=a.outdir)
-    if not a.quiet:
-        print("\n".join(sections[-1][1]) if sections else "")
-    return 0
-
+from kpi_cockpit.cli import main  # noqa: E402  （sys.path 注入后方可导入，src 布局必需）
 
 if __name__ == "__main__":
     sys.exit(main())

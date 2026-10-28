@@ -8,29 +8,13 @@
   python run.py --outdir out/   # 指定输出目录
   python run.py --quiet         # 只输出到文件，不打印到控制台
 """
-import argparse
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "src"))
 
-import collector_hub.config as C  # noqa: E402  （sys.path 注入后方可导入，属 src 布局必需）
-import collector_hub.pipeline as P  # noqa: E402
-
-
-def main(argv=None):
-    ap = argparse.ArgumentParser(description="多源数据采集中枢")
-    ap.add_argument("--config", default=os.path.join(HERE, "config", "rules.yaml"))
-    ap.add_argument("--outdir", default=os.path.join(HERE, "output"))
-    ap.add_argument("--quiet", action="store_true")
-    a = ap.parse_args(argv)
-    cfg = C.load_config(a.config)
-    sections = P.run(cfg, out_dir=a.outdir)
-    if not a.quiet:
-        print("\n".join(sections[-1][1]) if sections else "")
-    return 0
-
+from collector_hub.cli import main  # noqa: E402  （sys.path 注入后方可导入，src 布局必需）
 
 if __name__ == "__main__":
     sys.exit(main())
