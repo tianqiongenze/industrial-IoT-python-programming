@@ -1,5 +1,9 @@
+venv/
+.venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-.venv/
+.ruff_cache/
 output/*.log
+data/*.db
+.DS_Store

@@ -3,8 +3,27 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+*.bak*
+.ipynb_checkpoints/
+
+# 运行期产物（run.py 的 output/ 才是交付证据）
+工程化项目/*/output/test_run/
 *.db
 *.kuzu
 *.duckdb
 *.onnx
 *.pt
+
+# ===== 考试试卷与答案类：仅本地留存，不同步、不上传（2026-10-28 用户口径）=====
+/Python程序设计课程II类*试卷*
+/Python程序设计II类*参考答案与评分细则*
+/电气制图与CAD*
+/期末考试Gitee代码托管与提交操作指引.docx
+/期末考试模拟数据/
+/工具/Python程序设计*
+/工具/电气制图与CAD*
+/工具/期末试卷生成/
+
+# 命令行误建垃圾
+/--help
+/.workbuddy

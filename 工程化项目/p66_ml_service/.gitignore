@@ -8,4 +8,6 @@ dist/
 .venv/
 venv/
 output/*.log
+# 墙钟实测训练耗时（fit_ms）落此目录，不进 output/，不入库
+runtime/
 .DS_Store
