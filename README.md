@@ -88,6 +88,40 @@
 - W5 可视化默认 **Streamlit**（`pip install streamlit plotly`，比Dash轻量）；离线wheel随包；
 - W6 复用 `../02-Python编程基础/虚拟产线/` 两个模拟器（或用本包 plc_simulator.py）。
 
+### 期末考核项目环境（pp09，学生自建）
+
+期末A/B/C三卷不再由考场预装环境，每位考生用Anaconda新建conda环境 **pp09**（Python 3.12），
+下列命令与屏显原样贴进个人工程README的“项目环境”小节——这是任务分析环节的第一份留痕证据。
+
+```bash
+conda create -n pp09 python=3.12 -y
+conda activate pp09            # 本身无屏显，记录其后 python -V 的返回即可
+python -V
+pip install pandas numpy matplotlib sqlalchemy jinja2
+python -c "import pandas,numpy,matplotlib,sqlalchemy,jinja2,sqlite3;print(pandas.__version__,numpy.__version__,matplotlib.__version__,sqlalchemy.__version__,jinja2.__version__,sqlite3.sqlite_version)"
+```
+
+三卷按题面各取所需，最小安装为：A卷 `pandas numpy matplotlib`；B卷 `pandas sqlalchemy`
+（sqlite3 是标准库，无需安装）；C卷 `pandas matplotlib jinja2`。
+
+教师机pp09实测版本（2026-11-04，与三份卷面“项目环境与运行提示”③一致）：
+
+| 组件 | 版本 | 说明 |
+| --- | --- | --- |
+| Python | 3.12.11 | `conda create -n pp09 python=3.12` 解析到的补丁版 |
+| pandas | 3.1.0 | 读CSV用 `pd.read_csv`，随卷csv带UTF-8 BOM |
+| numpy | 2.5.4 | A卷统计计算 |
+| matplotlib | 3.11.2 | A/C卷出图，须设 `font.sans-serif` 否则中文呈方框 |
+| SQLAlchemy | 2.1.8 | B卷ORM建表；`to_sql` 须 `if_exists="append"` |
+| Jinja2 | 3.1.6 | C卷日报模板渲染（与f-string拼接等效） |
+| SQLite | 3.50.2 | `sqlite3.sqlite_version`，零安装 |
+
+未安装的库：seaborn、plotly、openpyxl。题面白名单之外的库须自行联网安装，风险自担；
+交 `.xlsx` 需另装 openpyxl。机房无外网时改用 `conda install` 或本地离线源/wheel，
+版本与上表不一致一律以现场 `python -V`、`pip list` 实测为准，并在README“项目环境”写明差异与处理方式。
+
+pip下载慢属考场故障场景：立即举手，由教师切换conda源或本地离线源，不作为扣分项。
+
 ## 评分要点
 
 过程性80%（工单45%×8 + 代码审查20% + 学习投入15%）+ 综合项目20%。
